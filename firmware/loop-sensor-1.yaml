@@ -52,10 +52,13 @@ packages:
   # Local copy -- works today, straight out of the repository.
   loop_board: !include package/esp32-4to20ma-board.yaml
 
-  # Once the package is published, swap the line above for this one and every
+  # Once the repository is PUBLIC, swap the line above for this one and every
   # board tracks the same definition:
   #
-  # loop_board: github://Diode663/<repo>/firmware/package/esp32-4to20ma-board.yaml@main
+  # loop_board: github://Diode663/ESP32_4-20mA_Sensor/firmware/package/esp32-4to20ma-board.yaml@main
+  #
+  # This needs a public repository: ESPHome fetches the file anonymously, so a
+  # private one would mean putting a token on every device.
   #
   # Pin `@v1.0.0` rather than `@main` on anything you care about, so a change
   # upstream cannot rewrite the firmware of a running instrument.
