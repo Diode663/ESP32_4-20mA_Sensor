@@ -49,19 +49,20 @@ substitutions:
   # wrong device_class is worse than none.
 
 packages:
-  # Local copy -- works today, straight out of the repository.
-  loop_board: !include package/esp32-4to20ma-board.yaml
+  # Every board tracks the same definition, fetched from GitHub.
+  #
+  # `@main` means a push to this repository changes the firmware of anything
+  # you reflash afterwards. Pin a tag instead -- `...yaml@v1.0.0` -- on any
+  # instrument you actually care about.
+  #
+  # ESPHome caches the fetched file; `esphome clean` or `--refresh` forces a
+  # re-fetch if you have just pushed a change upstream.
+  loop_board: github://Diode663/ESP32_4-20mA_Sensor/firmware/package/esp32-4to20ma-board.yaml@main
 
-  # Once the repository is PUBLIC, swap the line above for this one and every
-  # board tracks the same definition:
+  # Working on the package itself? Use the local copy instead -- otherwise you
+  # are compiling whatever was last PUSHED, not what is on your disk:
   #
-  # loop_board: github://Diode663/ESP32_4-20mA_Sensor/firmware/package/esp32-4to20ma-board.yaml@main
-  #
-  # This needs a public repository: ESPHome fetches the file anonymously, so a
-  # private one would mean putting a token on every device.
-  #
-  # Pin `@v1.0.0` rather than `@main` on anything you care about, so a change
-  # upstream cannot rewrite the firmware of a running instrument.
+  # loop_board: !include package/esp32-4to20ma-board.yaml
 
 # -----------------------------------------------------------------------------
 # Site-specific overrides go here. A few worth knowing about:
