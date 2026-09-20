@@ -21,3 +21,10 @@ firmware/secrets.yaml
 # analyzer run folders are large and regenerable; the reviews themselves are in docs/
 analysis/2026-*/
 analysis/capability_mode.json
+
+# routing and fab scratch: the autorouter's work folder (logs carry local paths),
+# the intermediate CPL (the one to upload is in fab/), analyzer run state
+routing/work/
+jlc/
+routing/capability_mode.json
+routing/gerber_analysis.json

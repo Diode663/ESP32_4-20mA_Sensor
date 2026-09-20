@@ -24,121 +24,24 @@ script checks that each pad it starts or ends on is where it expects and
 stops if not -- move a part in place_components.py and its route here has to
 follow. If a part that only the autorouter touches moves, run --autoroute.
 
-Coordinates are board mm, origin top-left, Y down.
+Coordinates are board mm, origin top-left, Y down. The drawing, autorouter and
+reporting machinery is routelib.py (from the kicad-pcb-placement skill); this
+file is only this board's copper.
 """
-import json
 import os
-import re
-import subprocess
 import sys
 
 import pcbnew
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+from routelib import Router, F, B      # noqa: E402
+
 NAME = "esp32-4to20ma-board"
-PCB = os.path.join(HERE, NAME + ".kicad_pcb")
-AUTO_JSON = os.path.join(HERE, "routing", "autoroute.json")
-FREEROUTING = r"C:\Users\diode\tools\freerouting"
-KICAD_CLI = r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe"
-
-OX, OY = 100.0, 50.0
 W, H = 40.0, 61.0
-F, B = pcbnew.F_Cu, pcbnew.B_Cu
-mm = pcbnew.FromMM
 
-board = None
-NETS = {}
-FPS = {}
-MOVED = []           # pads that are not where this script was written for
-_REMOVED = []        # pcbnew: a removed item's proxy must never be garbage-collected
-
-
-def load(path=PCB):
-    global board, NETS, FPS
-    board = pcbnew.LoadBoard(path)
-    NETS = {n.GetNetname(): n for n in board.GetNetInfo().NetsByNetcode().values()}
-    FPS = {f.GetReference(): f for f in board.GetFootprints()}
-
-
-def pt(x, y):
-    return pcbnew.VECTOR2I(mm(OX + x), mm(OY + y))
-
-
-def pad(ref, num, expect=None, net=None):
-    """Board-mm centre of a pad. `expect` proves the placement is the one this
-    script was written for; `net` proves the netlist is."""
-    for p in FPS[ref].Pads():
-        if p.GetNumber() == str(num):
-            q = p.GetPosition()
-            xy = (round(pcbnew.ToMM(q.x) - OX, 3), round(pcbnew.ToMM(q.y) - OY, 3))
-            if expect and (abs(xy[0] - expect[0]) > 0.02 or abs(xy[1] - expect[1]) > 0.02):
-                MOVED.append("%s.%s is at %s, route_board.py expects %s" % (ref, num, xy, expect))
-            if net and p.GetNetname() != net:
-                raise SystemExit("%s.%s is on %s, route_board.py expects %s -- netlist changed"
-                                 % (ref, num, p.GetNetname(), net))
-            return xy
-    raise KeyError((ref, num))
-
-
-def track(net, pts, width, layer=F):
-    for a, b in zip(pts, pts[1:]):
-        if a == b:
-            continue
-        t = pcbnew.PCB_TRACK(board)
-        t.SetStart(pt(*a))
-        t.SetEnd(pt(*b))
-        t.SetWidth(mm(width))
-        t.SetLayer(layer)
-        t.SetNet(NETS[net])
-        board.Add(t)
-
-
-def via(net, xy, dia=0.6, drill=0.3):
-    v = pcbnew.PCB_VIA(board)
-    v.SetPosition(pt(*xy))
-    v.SetViaType(pcbnew.VIATYPE_THROUGH)
-    v.SetWidth(mm(dia))
-    v.SetDrill(mm(drill))
-    v.SetLayerPair(F, B)
-    v.SetNet(NETS[net])
-    board.Add(v)
-    return xy
-
-
-def clear():
-    """Drop every track, via and copper zone. Zones are collected before anything
-    is removed, and every removed proxy is kept alive (see _REMOVED)."""
-    zones = [board.GetArea(i) for i in range(board.GetAreaCount())]
-    doomed = list(board.GetTracks()) + [z for z in zones if not z.GetIsRuleArea()]
-    for item in doomed:
-        board.Remove(item)
-        _REMOVED.append(item)
-
-
-def zone(net, layer, name, poly=None, priority=0, clearance=0.2, solid=False):
-    z = pcbnew.ZONE(board)
-    z.SetLayer(layer)
-    z.SetNet(NETS[net])
-    z.SetZoneName(name)
-    o = z.Outline()
-    o.NewOutline()
-    for x, y in (poly or ((0, 0), (W, 0), (W, H), (0, H))):
-        o.Append(mm(OX + x), mm(OY + y))
-    z.SetLocalClearance(mm(clearance))
-    z.SetMinThickness(mm(0.25))
-    z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL if solid else pcbnew.ZONE_CONNECTION_THERMAL)
-    z.SetThermalReliefGap(mm(0.25))
-    z.SetThermalReliefSpokeWidth(mm(0.3))
-    z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
-    z.SetAssignedPriority(priority)
-    board.Add(z)
-    return z
-
-
-def zone_connection(ref, num, mode):
-    for p in FPS[ref].Pads():
-        if p.GetNumber() == str(num):
-            p.SetLocalZoneConnection(mode)
+r = Router(__file__, NAME, size=(W, H))
+pad, track, via, zone, zone_connection = r.pad, r.track, r.via, r.zone, r.zone_connection
 
 
 # ---------------------------------------------------------------------------
@@ -188,6 +91,12 @@ def route_cc_vbus():
     for ref, x in (("R7", 9.80), ("R8", 13.20)):
         g = pad(ref, 2, (x, 50.49), "GND")
         track("GND", [g, via("GND", (x, 49.60))], 0.3)
+    # J1's two ground signal pins are boxed in by their neighbours, so the pour
+    # reaches each with one spoke at best: tie each to the shell stake beside it
+    for num, x, xs in (("A1B12", 8.30, 7.45), ("B1A12", 14.70, 15.55)):
+        g = pad("J1", num, (x, yp), "GND")
+        track("GND", [g, (xs, yp)], 0.3)
+        zone_connection("J1", num, pcbnew.ZONE_CONNECTION_FULL)
     # the clamp's ground pin, boxed in by the pair: its own via
     track("GND", [pad("D1", 2, (11.50, 46.35), "GND"), via("GND", (11.50, 45.20))], 0.3)
 
@@ -282,7 +191,7 @@ def route_loop():
     q11 = pad("Q1", 1, (33.50, 45.95), "/LOOP_DRV")
     q12, q14 = pad("Q1", 2, (35.80, 45.95), "/LOOP_C"), pad("Q1", 4, (35.80, 39.65), "/LOOP_C")
     q13 = pad("Q1", 3, (38.10, 45.95), "/LOOP_SNS")
-    track("/LOOP_SNS", [r162, r181, (39.0, 35.44), (39.40, 35.84), (39.40, 45.15), (38.6, 45.95), q13], 0.4)
+    track("/LOOP_SNS", [r162, r181, (38.97, 35.44), (39.32, 35.79), (39.32, 45.23), (38.6, 45.95), q13], 0.3)
     track("/LOOP_FB", [r182, (37.6, 36.46), (37.2, 36.06), q21], 0.25)
     track("/LOOP_DRV", [q23, (34.3, 35.0), (33.85, 35.45), (33.85, 37.3), (33.44, 37.71), r171,
                         (33.0, 44.6), (33.5, 45.1), q11], 0.25)
@@ -334,7 +243,10 @@ def route_sense():
     # so the pour is kept off it
     zone_connection("R14", 1, pcbnew.ZONE_CONNECTION_NONE)
     track("/INA_INP", [r132, (24.9, 43.10), (24.72, 42.92), c91, (23.85, 42.92), (23.41, 43.36), (23.2, 43.50), u10], 0.2)
-    track("/INA_INN", [r142, (25.0, 44.40), (24.6, 44.0), c92, (23.9, 43.88), (23.78, 44.00), u9], 0.2)
+    track("/INA_INN", [r142, (25.49, 44.00), (24.52, 44.00), c92, (23.9, 43.88), (23.78, 44.00), u9], 0.2)
+    # bus-voltage tap: out of pin 8 under C9, then down to R20 clear of the IN- tap
+    u8, r202 = pad("U3", 8, (22.61, 44.50), "/INA_VBUS"), pad("R20", 2, (25.89, 45.80), "/INA_VBUS")
+    track("/INA_VBUS", [u8, (24.75, 44.50), (25.35, 45.10), (25.35, 45.55), (25.60, 45.80), r202], 0.2)
     # supply pin and its capacitor; one ground via for pin 7 and the capacitor
     c81, c82 = pad("C8", 1, (22.62, 46.70), "+3V3"), pad("C8", 2, (23.58, 46.70), "GND")
     u6, u7 = pad("U3", 6, (22.61, 45.50), "+3V3"), pad("U3", 7, (22.61, 45.00), "GND")
@@ -343,7 +255,13 @@ def route_sense():
     track("GND", [(23.2, 45.00), (23.70, 45.00), g], 0.25)
     track("GND", [c82, (24.20, 46.08), g], 0.25)
     track("GND", [pad("U3", 1, (18.39, 43.50), "GND"), pad("U3", 2, (18.39, 44.00), "GND")], 0.25)
-    track("GND", [(17.8, 43.75), via("GND", (17.10, 43.75))], 0.25)
+    track("GND", [pad("U3", 1), via("GND", (18.39, 42.55))], 0.25)
+    # I2C lands on the west side as a pair: SDA inside, SCL outside, which is the
+    # order pins 4 and 5 want. Left to itself the autorouter wraps SCL round the
+    # corner first and boxes SDA in. It picks these two stubs up at their top ends.
+    u4, u5 = pad("U3", 4, (18.39, 45.00), "/I2C_SDA"), pad("U3", 5, (18.39, 45.50), "/I2C_SCL")
+    track("/I2C_SDA", [u4, (17.20, 45.00), (16.75, 44.55), (16.75, 38.0)], 0.2)
+    track("/I2C_SCL", [u5, (17.00, 45.50), (16.30, 44.80), (16.30, 38.0)], 0.2)
 
 
 # ---------------------------------------------------------------------------
@@ -359,7 +277,7 @@ def route_ground():
         p = pad(ref, num, net="GND")
         track("GND", [p, via("GND", xy)], 0.3)
     for xy in [(2.0, 25.0), (2.0, 40.0), (20.0, 58.5), (38.0, 25.0), (38.0, 10.0), (2.0, 10.0),
-               (17.0, 38.0), (21.0, 36.5), (27.0, 26.5), (6.0, 40.0), (16.5, 41.0), (12.0, 41.0),
+               (17.8, 38.0), (21.0, 36.5), (27.0, 26.5), (6.0, 40.0), (15.5, 41.0), (12.0, 41.0),
                (34.0, 56.5), (24.0, 23.5), (11.0, 23.7), (34.5, 29.0)]:
         via("GND", xy)
 
@@ -369,233 +287,20 @@ def solid_power_grounds():
     for ref, num in (("C10", 2), ("C11", 2), ("U5", 2), ("R12", 2), ("D3", 2), ("D5", 2),
                      ("C7", 2), ("C6", 2), ("Q1", 2), ("Q1", 4), ("D4", 2)):
         zone_connection(ref, num, pcbnew.ZONE_CONNECTION_FULL)
+    # the module's centre pad and its thermal holes: solid into both pours
+    zone_connection("U1", 41, pcbnew.ZONE_CONNECTION_FULL)
 
 
-# ---------------------------------------------------------------------------
-# The autorouted remainder
-# ---------------------------------------------------------------------------
 #: Nets this script routes completely. Whatever an autorouter adds to them is
 #: dropped: it can only be a duplicate (Freerouting does not count a track that
 #: ends inside a pad, off its centre, as connected; KiCad does).
 SCRIPTED_NETS = {"GND", "+5V", "+24V", "/VIN_SW", "/MT_SW", "/MT_FB", "/USB_P", "/USB_N", "/CC1", "/CC2",
-                 "/LOOP_C", "/LOOP_RTN", "/LOOP_SNS", "/LOOP_FB", "/LOOP_DRV", "/INA_INP", "/INA_INN"}
-
-
-def _sexpr(text):
-    """Minimal S-expression reader: nested lists of strings."""
-    tok = re.findall(r'"(?:[^"\\]|\\.)*"|[()]|[^\s()]+', text)
-    stack, cur = [], []
-    for t in tok:
-        if t == "(":
-            stack.append(cur)
-            cur = []
-        elif t == ")":
-            done = cur
-            cur = stack.pop()
-            cur.append(done)
-        else:
-            cur.append(t[1:-1] if t.startswith('"') else t)
-    return cur[0]
-
-
-def parse_ses(path):
-    """New (unprotected) wires and vias from a Specctra session file, as the
-    same plain records snapshot() makes. KiCad's own importer refuses a
-    session that carries (type protect), so this reads it directly."""
-    root = _sexpr(open(path, encoding="utf-8").read())
-    routes = [x for x in root if isinstance(x, list) and x and x[0] == "routes"][0]
-    res = [x for x in routes if isinstance(x, list) and x[0] == "resolution"][0]
-    per_mm = {"um": 1000.0, "mm": 1.0, "mil": 39.3701, "inch": 0.0393701}[res[1]] * float(res[2])
-    net_out = [x for x in routes if isinstance(x, list) and x[0] == "network_out"][0]
-    out = []
-    for net in (x for x in net_out if isinstance(x, list) and x[0] == "net"):
-        name = net[1]
-        for item in net[2:]:
-            if not isinstance(item, list):
-                continue
-            if any(isinstance(k, list) and k[:2] == ["type", "protect"] for k in item):
-                continue
-            if item[0] == "wire":
-                path = [k for k in item if isinstance(k, list) and k[0] == "path"][0]
-                layer = "F" if path[1] == "top_cu" else "B"
-                w = float(path[2]) / per_mm
-                xy = [float(v) / per_mm for v in path[3:]]
-                pts = [(round(xy[i] - OX, 4), round(-xy[i + 1] - OY, 4)) for i in range(0, len(xy), 2)]
-                for a, b in zip(pts, pts[1:]):
-                    if a != b:
-                        out.append({"net": name, "layer": layer, "x1": a[0], "y1": a[1],
-                                    "x2": b[0], "y2": b[1], "w": round(w, 3)})
-            elif item[0] == "via":
-                m = re.search(r"_(\d+):(\d+)_um", item[1])
-                out.append({"via": True, "net": name, "x": round(float(item[2]) / per_mm - OX, 4),
-                            "y": round(-float(item[3]) / per_mm - OY, 4),
-                            "d": int(m.group(1)) / 1000.0, "drill": int(m.group(2)) / 1000.0})
-    return out
-
-
-def normalise():
-    """Make the scripted copper legible to an autorouter, which is stricter
-    than KiCad about what counts as connected: split a track wherever another
-    track of its net ends on it (a T junction), so every junction is an
-    endpoint. Geometry is unchanged."""
-    splits = 0
-    for _ in range(4):
-        tracks = [t for t in board.GetTracks() if t.GetClass() != "PCB_VIA"]
-        ends = {}
-        for t in board.GetTracks():
-            if t.GetClass() == "PCB_VIA":
-                ends.setdefault(t.GetNetname(), set()).add((t.GetPosition().x, t.GetPosition().y, None))
-            else:
-                for q in (t.GetStart(), t.GetEnd()):
-                    ends.setdefault(t.GetNetname(), set()).add((q.x, q.y, t.GetLayer()))
-        changed = False
-        for t in tracks:
-            a, b = t.GetStart(), t.GetEnd()
-            L2 = float(b.x - a.x) ** 2 + float(b.y - a.y) ** 2
-            if L2 == 0:
-                continue
-            for (x, y, layer) in sorted(ends.get(t.GetNetname(), ()), key=lambda e: (e[0], e[1])):
-                if layer is not None and layer != t.GetLayer():
-                    continue
-                if (x, y) in ((a.x, a.y), (b.x, b.y)):
-                    continue
-                u = ((x - a.x) * (b.x - a.x) + (y - a.y) * (b.y - a.y)) / L2
-                if not 0.0 < u < 1.0:
-                    continue
-                px, py = a.x + u * (b.x - a.x), a.y + u * (b.y - a.y)
-                if (px - x) ** 2 + (py - y) ** 2 > 1000.0 ** 2:       # 1 um
-                    continue
-                t2 = pcbnew.PCB_TRACK(board)
-                t2.SetStart(pcbnew.VECTOR2I(int(x), int(y)))
-                t2.SetEnd(b)
-                t2.SetWidth(t.GetWidth())
-                t2.SetLayer(t.GetLayer())
-                t2.SetNet(t.GetNet())
-                t.SetEnd(pcbnew.VECTOR2I(int(x), int(y)))
-                board.Add(t2)
-                splits += 1
-                changed = True
-                break
-        if not changed:
-            break
-    return splits
-
-
-def snapshot(bd=None):
-    """Every track and via as plain data, for comparison and for replay."""
-    out = []
-    for t in (bd or board).GetTracks():
-        n = t.GetNetname()
-        if t.GetClass() == "PCB_VIA":
-            q = t.GetPosition()
-            out.append({"via": True, "net": n, "x": round(pcbnew.ToMM(q.x) - OX, 4),
-                        "y": round(pcbnew.ToMM(q.y) - OY, 4),
-                        "d": round(pcbnew.ToMM(t.GetWidth(F)), 3), "drill": round(pcbnew.ToMM(t.GetDrill()), 3)})
-        else:
-            a, b = t.GetStart(), t.GetEnd()
-            out.append({"net": n, "layer": "F" if t.GetLayer() == F else "B",
-                        "x1": round(pcbnew.ToMM(a.x) - OX, 4), "y1": round(pcbnew.ToMM(a.y) - OY, 4),
-                        "x2": round(pcbnew.ToMM(b.x) - OX, 4), "y2": round(pcbnew.ToMM(b.y) - OY, 4),
-                        "w": round(pcbnew.ToMM(t.GetWidth()), 3)})
-    return out
-
-
-def _key(t):
-    if t.get("via"):
-        return ("v", t["net"], round(t["x"], 2), round(t["y"], 2))
-    a, b = (round(t["x1"], 2), round(t["y1"], 2)), (round(t["x2"], 2), round(t["y2"], 2))
-    return ("t", t["net"], t["layer"]) + tuple(sorted((a, b)))
-
-
-def replay_autoroute():
-    if not os.path.exists(AUTO_JSON):
-        print("no routing/autoroute.json yet -- run with --autoroute")
-        return 0
-    data = json.load(open(AUTO_JSON, encoding="utf-8"))
-    for t in data["items"]:
-        if t["net"] not in NETS:
-            raise SystemExit("autoroute.json names net %s, which no longer exists -- run --autoroute" % t["net"])
-        if t.get("via"):
-            via(t["net"], (t["x"], t["y"]), t["d"], t["drill"])
-        else:
-            track(t["net"], [(t["x1"], t["y1"]), (t["x2"], t["y2"])], t["w"], F if t["layer"] == "F" else B)
-    return len(data["items"])
-
-
-def autoroute(passes):
-    """Scripted routes -> Specctra DSN -> Freerouting -> SES -> keep what is new."""
-    work = os.path.join(HERE, "routing", "work")
-    os.makedirs(work, exist_ok=True)
-    tmp = os.path.join(work, NAME + ".kicad_pcb")
-    for ext in (".kicad_pro", ".kicad_dru"):
-        src = os.path.join(HERE, NAME + ext)
-        if os.path.exists(src):
-            open(os.path.join(work, NAME + ext), "wb").write(open(src, "rb").read())
-    pcbnew.SaveBoard(tmp, board)
-    dsn, ses = os.path.join(work, NAME + ".dsn"), os.path.join(work, NAME + ".ses")
-    for f in (dsn, ses):
-        if os.path.exists(f):
-            os.remove(f)
-    wb = pcbnew.LoadBoard(tmp)
-    if not pcbnew.ExportSpecctraDSN(wb, dsn):
-        raise SystemExit("DSN export failed")
-    # Two things KiCad's export leaves to us. Existing wiring is written as
-    # (type route), which an autorouter may rip up: mark it (type protect).
-    # And netclasses come out as "GND,Default", which -inc cannot name.
-    text = open(dsn, encoding="utf-8").read()
-    text = text.replace("(type route)", "(type protect)").replace(",Default ", " ")
-    open(dsn, "w", encoding="utf-8").write(text)
-    java = [os.path.join(FREEROUTING, d, "bin", "java.exe") for d in os.listdir(FREEROUTING) if d.startswith("jdk")][0]
-    jar = [os.path.join(FREEROUTING, f) for f in os.listdir(FREEROUTING) if f.endswith(".jar")][0]
-    # Headless, no SMD fan-out stage (it scatters vias), telemetry off, and its
-    # settings file kept in the work folder rather than in the user profile.
-    cmd = [java, "-jar", jar, "--gui.enabled=false", "--user_data_path=" + os.path.join(work, "freerouting-user"),
-           "--usage_and_diagnostic_data.disable_analytics=true", "--profile.allow_telemetry=false",
-           "--router.fanout.enabled=false", "--router.max_passes=%d" % passes,
-           "-de", dsn, "-do", ses]
-    print("running Freerouting:", " ".join(os.path.basename(c) if os.sep in c else c for c in cmd))
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800, cwd=work)
-    open(os.path.join(work, "freerouting.log"), "w", encoding="utf-8").write(r.stdout + "\n" + r.stderr)
-    if not os.path.exists(ses):
-        raise SystemExit("Freerouting wrote no session file; see routing/work/freerouting.log")
-    new = parse_ses(ses)
-    dropped = [t for t in new if t["net"] in SCRIPTED_NETS]
-    new = [t for t in new if t["net"] not in SCRIPTED_NETS]
-    print("Freerouting added %d items on %d nets (%d more on scripted nets, dropped)"
-          % (len(new), len({t["net"] for t in new}), len(dropped)))
-    os.makedirs(os.path.dirname(AUTO_JSON), exist_ok=True)
-    json.dump({"tool": os.path.basename(jar), "passes": passes, "items": new},
-              open(AUTO_JSON, "w", encoding="utf-8"), indent=0)
-    return len(new)
-
-
-# ---------------------------------------------------------------------------
-def drc_report():
-    out = os.path.join(HERE, "routing", "drc.json")
-    os.makedirs(os.path.dirname(out), exist_ok=True)
-    subprocess.run([KICAD_CLI, "pcb", "drc", "--format", "json", "--units", "mm", "--severity-all",
-                    "--schematic-parity", "-o", out, PCB], capture_output=True, text=True)
-    d = json.load(open(out, encoding="utf-8"))
-
-    def where(it):
-        p = it.get("pos", {})
-        return "(%.2f, %.2f)" % (p.get("x", 0) - OX, p.get("y", 0) - OY)
-    v = d.get("violations", [])
-    print("DRC: %d violations, %d unconnected, %d parity" % (len(v), len(d.get("unconnected_items", [])),
-                                                             len(d.get("schematic_parity", []))))
-    for x in v:
-        items = x.get("items", [])
-        print("  %-8s %-22s %s  %s" % (x["severity"], x["type"], where(items[0]) if items else "",
-                                       " | ".join(i["description"][:60] for i in items)))
-    for x in d.get("unconnected_items", []):
-        items = x.get("items", [])
-        print("  unconnected  %s  %s" % (where(items[0]) if items else "", " | ".join(i["description"][:70] for i in items)))
-    return d
+                 "/LOOP_C", "/LOOP_RTN", "/LOOP_SNS", "/LOOP_FB", "/LOOP_DRV", "/INA_INP", "/INA_INN",
+                 "/INA_VBUS"}
 
 
 def main():
-    load()
-    clear()
+    r.clear()
     solid_power_grounds()
     route_usb()
     route_cc_vbus()
@@ -603,27 +308,29 @@ def main():
     route_boost()
     route_loop()
     route_sense()
-    if MOVED:
-        raise SystemExit("placement changed -- these routes have to follow:\n  " + "\n  ".join(MOVED))
+    r.check_moved()
     # ground vias and Q1's copper go in BEFORE the autorouter runs, so that it
-    # routes round them; the ground pours go in after it, over whatever is left
+    # routes round them
     route_ground()
     q1 = [(33.75, 38.2), (38.75, 38.2), (38.75, 47.3), (33.75, 47.3)]
     zone("/LOOP_C", F, "Q1 copper top", q1, 1, 0.25, True)
     zone("/LOOP_C", B, "Q1 copper bottom", q1, 1, 0.25, True)
     zone("GND", F, "GND top")           # present before the export, so the autorouter sees ground as a
     zone("GND", B, "GND bottom")        # plane and leaves it alone; filled after its tracks are in
-    normalise()
-    scripted = len(list(board.GetTracks()))
+    r.normalise()
+    scripted = r.count()
     if "--autoroute" in sys.argv:
-        autoroute(int(os.environ.get("FREEROUTING_PASSES", "30")))
-    auto = replay_autoroute()
-    pcbnew.ZONE_FILLER(board).Fill([board.GetArea(i) for i in range(board.GetAreaCount())])
-    pcbnew.SaveBoard(PCB, board)
+        r.autoroute(SCRIPTED_NETS, passes=int(os.environ.get("FREEROUTING_PASSES", "30")),
+                    best_of=int(os.environ.get("FREEROUTING_BEST_OF", "1")))
+    auto = r.replay()
+    r.fill()
+    r.save()
     print("routed: %d scripted + %d autorouted track segments and vias" % (scripted, auto))
     if "--dump" in sys.argv:
-        json.dump(snapshot(), open(os.path.join(HERE, "routing", "tracks.json"), "w"))
-    drc_report()
+        import json
+        json.dump(r.snapshot(), open(os.path.join(HERE, "routing", "tracks.json"), "w"))
+    r.drc_report()
+    r.report(pairs=[("/USB_P", "/USB_N")])
 
 
 if __name__ == "__main__":

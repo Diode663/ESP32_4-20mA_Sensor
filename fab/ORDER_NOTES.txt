@@ -1,0 +1,48 @@
+JLCPCB order settings for esp32-4to20ma-board (Rev G, 2026-09-20)
+
+PCB
+  Layers 2, 40 x 61 mm, thickness 1.6 mm, outer copper 1 oz, FR-4 (stackup JLC0216A).
+  Surface finish: LeadFree HASL is fine; nothing finer than 0.5 mm pitch (U3, MSOP-10).
+  Via covering: tented. Smallest via 0.6 mm / 0.3 mm hole, smallest track 0.2 mm,
+  smallest clearance 0.15 mm (USB fan-out), copper to edge 0.5 mm: all in the
+  no-surcharge tier.
+  Impedance control: NO. Two layers, and the USB is full speed (12 Mbit/s).
+  Remove order number: optional; no "JLCJLCJLCJLC" location is drawn on this board.
+  The ESP32 module's footprint reaches 0.19 mm past the TOP board edge and J1's and
+  J2's bodies reach the BOTTOM edge: intentional, say so if their engineer asks.
+
+PCB assembly
+  PCBA type: STANDARD, not Economic. U1 (ESP32-S3-WROOM-1U-N4, C2980296) is listed
+  "PCBA Type: Standard Only" in JLCPCB's parts library (checked 2026-09-20). J2
+  (KF250NH-5.0-3P, C976567) is "Economic and Standard", assembly type "Wave Soldering":
+  it is the one through-hole part and rides along in a Standard order.
+  Side: top only. Tooling holes: added by JLCPCB. Fiducials FID1-FID3 are on the board.
+  Files: *_bom.csv and *_cpl.csv from this folder.
+  Not populated by design, in neither file: H1-H4 (holes), FID1-3, TP1-TP5 (pads).
+
+  Placement corrections (jlc_rotations.json, each with its evidence): every polarised
+  part was compared pad by pad with JLCPCB's own footprint for its LCSC number. The
+  project-library parts are already at JLCPCB's zero. Only the four stock-KiCad
+  transistor footprints needed a correction: Q1 (SOT-223), Q2 Q3 Q4 (SOT-23), +180.
+  NONE of this has been seen in their preview yet. LOOK AT THESE after uploading the CPL:
+    Q1         tab (the wide pin) toward the TOP of the board, its three pins toward the bottom
+    Q2 Q4      the single pin (collector / drain) on the LEFT, the pair on the right
+    Q3         the single pin (drain) on the RIGHT, the pair on the left
+    D2         cathode band at the BOTTOM (pad 1, the +24V end, beside C11)
+    D3 D5 D4   cathode band on the RIGHT (pad 1: LOOP_V on D3 and D4, LOOP_RTN on D5)
+    LED1       cathode toward the BOTTOM edge. Its polarity rests on pad 1 = cathode in their
+               LED0805-RD footprint (its closed silk end is on the pad-1 side, as in KiCad's);
+               their symbol could not be fetched to confirm. A reversed LED only stays dark.
+    U1         module's RF can over the board, U.FL connector at the top-right corner
+    U3 U4 U5 D1  pin-1 dot on the silkscreen mark
+    J1         contacts on the pads, opening toward the bottom edge
+    J2         wire entries toward the bottom edge, orange buttons behind them
+
+Also order (bom/non-bom-items.csv): a U.FL / IPEX Gen 1 pigtail and a 2.4 GHz antenna.
+The -1U module has no antenna of its own.
+
+First board bring-up
+  Before plugging a sensor in: +5V, +3V3 at TP4, then MT_EN high and +24V at TP3.
+  Short LOOP_V (TP1) to LOOP_RTN (TP2) through a meter: expect about 33 mA, and the
+  firmware should drop MT_EN within its timeout. Q1 runs warm in that test (0.85 W).
+  Two-point calibration at 4 and 20 mA (firmware/README.md).

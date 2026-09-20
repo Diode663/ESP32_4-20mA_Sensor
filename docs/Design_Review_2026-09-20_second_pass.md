@@ -64,6 +64,14 @@ lines / 47 placements.
 State after both: 28 nets exact, ERC 0 errors, parity clean, placement DRC 4
 (all silk-at-edge) + 5 library-internal, BOM 34 lines / 47 placements.
 
+**Routed, same day.** `setup_fab.py` + `route_board.py`: critical nets scripted
+(boost per MT3608 Figure 3, Kelvin taps per INA226 Figure 30, USB entry, power
+trunks, the 24 V loop, Q1's copper, all ground vias and both pours), the rest by
+Freerouting 2.4.1 and replayed from `routing/autoroute.json`. 0 unconnected, DRC
+unchanged at 4 + 5, parity clean, bottom ground in one piece, no via in any pad,
+reproducible. What was listed below as routing advice is now what the board
+does; it is kept as the record of why. Still open: nothing has been measured.
+
 **Still open — all of it routing:** no copper, so EMC and thermal remain
 provisional. When routing: pour `LOOP_C` around Q1's tab and stitch it through;
 ground pour on both layers, stitched round the boost; keep the pour back from

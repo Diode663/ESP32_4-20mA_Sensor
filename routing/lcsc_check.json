@@ -1,0 +1,308 @@
+[
+ {
+  "lcsc": "C52923",
+  "refs": "C1,C6",
+  "bom_mfr": "Samwha/CCTC",
+  "bom_mpn": "CL05A105KA5NQNC",
+  "lcsc_mfr": "Samsung Electro-Mechanics",
+  "lcsc_mpn": "CL05A105KA5NQNC",
+  "stock": 1701200
+ },
+ {
+  "lcsc": "C45783",
+  "refs": "C2",
+  "bom_mfr": "CCTC",
+  "bom_mpn": "CL21A226MAQNNNE",
+  "lcsc_mfr": "Samsung Electro-Mechanics",
+  "lcsc_mpn": "CL21A226MAQNNNE",
+  "stock": 1917980
+ },
+ {
+  "lcsc": "C1525",
+  "refs": "C3,C8,C9,C12",
+  "bom_mfr": "CCTC",
+  "bom_mpn": "CL05B104KO5NNNC",
+  "lcsc_mfr": "Samsung Electro-Mechanics",
+  "lcsc_mpn": "CL05B104KO5NNNC",
+  "stock": 6483900
+ },
+ {
+  "lcsc": "C19702",
+  "refs": "C7",
+  "bom_mfr": "CCTC",
+  "bom_mpn": "CL10A106KP8NNNC",
+  "lcsc_mfr": "Samsung Electro-Mechanics",
+  "lcsc_mpn": "CL10A106KP8NNNC",
+  "stock": 5228380
+ },
+ {
+  "lcsc": "C2918502",
+  "refs": "C10,C11",
+  "bom_mfr": "Samsung/CCTC",
+  "bom_mpn": "CS3225X7R106K500NRL",
+  "lcsc_mfr": "SAMWHA",
+  "lcsc_mpn": "CS3225X7R106K500NRL",
+  "stock": 8605
+ },
+ {
+  "lcsc": "C2687116",
+  "refs": "D1",
+  "bom_mfr": "Ampec/ST-compatible",
+  "bom_mpn": "USBLC6-2SC6",
+  "lcsc_mfr": "UMW",
+  "lcsc_mpn": "USBLC6-2SC6",
+  "stock": 102480
+ },
+ {
+  "lcsc": "C8678",
+  "refs": "D2",
+  "bom_mfr": "MDD",
+  "bom_mpn": "SS34",
+  "lcsc_mfr": "MDD(Microdiode Semiconductor)",
+  "lcsc_mpn": "SS34",
+  "stock": 4190380
+ },
+ {
+  "lcsc": "C353458",
+  "refs": "D3",
+  "bom_mfr": "Jingdao Microelectronics",
+  "bom_mpn": "SMAJ28A",
+  "lcsc_mfr": "Jingdao Microelectronics",
+  "lcsc_mpn": "SMAJ28A",
+  "stock": 23200
+ },
+ {
+  "lcsc": "C81598",
+  "refs": "D4",
+  "bom_mfr": "ST (Semtech)",
+  "bom_mpn": "1N4148W",
+  "lcsc_mfr": "ST(Semtech)",
+  "lcsc_mpn": "1N4148W",
+  "stock": 4507300
+ },
+ {
+  "lcsc": "C113957",
+  "refs": "D5",
+  "bom_mfr": "MDD",
+  "bom_mpn": "SMAJ12A",
+  "lcsc_mfr": "MDD(Microdiode Semiconductor)",
+  "lcsc_mpn": "SMAJ12A",
+  "stock": 84840
+ },
+ {
+  "lcsc": "C2765186",
+  "refs": "J1",
+  "bom_mfr": "Korean Hroparts Elec",
+  "bom_mpn": "TYPE-C 16PIN 2MD(073)",
+  "lcsc_mfr": "SHOU HAN",
+  "lcsc_mpn": "TYPE-C 16PIN 2MD(073)",
+  "stock": 1084560
+ },
+ {
+  "lcsc": "C976567",
+  "refs": "J2",
+  "bom_mfr": "Cixi Kefa",
+  "bom_mpn": "KF250NH-5.0-3P",
+  "lcsc_mfr": "Cixi Kefa Elec",
+  "lcsc_mpn": "KF250NH-5.0-3P",
+  "stock": 1990
+ },
+ {
+  "lcsc": "C167883",
+  "refs": "L1",
+  "bom_mfr": "Sunlord",
+  "bom_mpn": "FNR4030S220MT",
+  "lcsc_mfr": "cjiang",
+  "lcsc_mpn": "FNR4030S220MT",
+  "stock": 26620
+ },
+ {
+  "lcsc": "C84256",
+  "refs": "LED1",
+  "bom_mfr": "Nichia-compatible",
+  "bom_mpn": "NCD0805R1",
+  "lcsc_mfr": "NATIONSTAR",
+  "lcsc_mpn": "NCD0805R1",
+  "stock": 4545150
+ },
+ {
+  "lcsc": "C148109",
+  "refs": "Q1",
+  "bom_mfr": "JSCJ",
+  "bom_mpn": "BCP53-16",
+  "lcsc_mfr": "JSCJ",
+  "lcsc_mpn": "BCP53-16",
+  "stock": 72280
+ },
+ {
+  "lcsc": "C8326",
+  "refs": "Q2",
+  "bom_mfr": "JSCJ",
+  "bom_mpn": "MMBT5401",
+  "lcsc_mfr": "JSCJ",
+  "lcsc_mpn": "MMBT5401(RANGE:200-300)",
+  "stock": 601550
+ },
+ {
+  "lcsc": "C15127",
+  "refs": "Q3",
+  "bom_mfr": "Alpha & Omega",
+  "bom_mpn": "AO3401A",
+  "lcsc_mfr": "AOS",
+  "lcsc_mpn": "AO3401A",
+  "stock": 534895
+ },
+ {
+  "lcsc": "C8545",
+  "refs": "Q4",
+  "bom_mfr": "JSCJ",
+  "bom_mpn": "2N7002",
+  "lcsc_mfr": "JSCJ",
+  "lcsc_mpn": "2N7002",
+  "stock": 1382850
+ },
+ {
+  "lcsc": "C25744",
+  "refs": "R1,R11,R20",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF1002TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF1002TCE",
+  "stock": 12592900
+ },
+ {
+  "lcsc": "C25900",
+  "refs": "R5,R6",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF4701TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF4701TCE",
+  "stock": 12170800
+ },
+ {
+  "lcsc": "C25905",
+  "refs": "R7,R8",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF5101TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF5101TCE",
+  "stock": 4724400
+ },
+ {
+  "lcsc": "C25104",
+  "refs": "R9",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF3300TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF3300TCE",
+  "stock": 668100
+ },
+ {
+  "lcsc": "C2909352",
+  "refs": "R10,R21",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "FRC0402F3903TS",
+  "lcsc_mfr": "FOJAN",
+  "lcsc_mpn": "FRC0402F3903TS",
+  "stock": 445400
+ },
+ {
+  "lcsc": "C3013220",
+  "refs": "R12",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "FRC0805F3R32TS",
+  "lcsc_mfr": "FOJAN",
+  "lcsc_mpn": "FRC0805F3R32TS",
+  "stock": 4810
+ },
+ {
+  "lcsc": "C25077",
+  "refs": "R13,R14",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF100JTCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF100JTCE",
+  "stock": 530600
+ },
+ {
+  "lcsc": "C25741",
+  "refs": "R15,R22",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF1003TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF1003TCE",
+  "stock": 5873700
+ },
+ {
+  "lcsc": "C138043",
+  "refs": "R16",
+  "bom_mfr": "Yageo",
+  "bom_mpn": "RC0402FR-0718RL",
+  "lcsc_mfr": "YAGEO",
+  "lcsc_mpn": "RC0402FR-0718RL",
+  "stock": 22200
+ },
+ {
+  "lcsc": "C25792",
+  "refs": "R17",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF4702TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF4702TCE",
+  "stock": 4437200
+ },
+ {
+  "lcsc": "C11702",
+  "refs": "R18",
+  "bom_mfr": "Uniroyal",
+  "bom_mpn": "0402WGF1001TCE",
+  "lcsc_mfr": "UNI-ROYAL",
+  "lcsc_mpn": "0402WGF1001TCE",
+  "stock": 2223700
+ },
+ {
+  "lcsc": "C2837531",
+  "refs": "SW1,SW2",
+  "bom_mfr": "Korean Hroparts Elec",
+  "bom_mpn": "KH-6X6X5H-STM",
+  "lcsc_mfr": "kinghelm",
+  "lcsc_mpn": "KH-6X6X5H-STM",
+  "stock": 481400
+ },
+ {
+  "lcsc": "C2980296",
+  "refs": "U1",
+  "bom_mfr": "Espressif",
+  "bom_mpn": "ESP32-S3-WROOM-1U-N4",
+  "lcsc_mfr": "ESPRESSIF",
+  "lcsc_mpn": "ESP32-S3-WROOM-1U-N4",
+  "stock": 1702
+ },
+ {
+  "lcsc": "C49851",
+  "refs": "U3",
+  "bom_mfr": "Texas Instruments",
+  "bom_mpn": "INA226AIDGSR",
+  "lcsc_mfr": "TI",
+  "lcsc_mpn": "INA226AIDGSR",
+  "stock": 39289
+ },
+ {
+  "lcsc": "C51118",
+  "refs": "U4",
+  "bom_mfr": "Diodes Inc",
+  "bom_mpn": "AP2112K-3.3TRG1",
+  "lcsc_mfr": "DIODES",
+  "lcsc_mpn": "AP2112K-3.3TRG1",
+  "stock": 52940
+ },
+ {
+  "lcsc": "C84817",
+  "refs": "U5",
+  "bom_mfr": "Aerosemi",
+  "bom_mpn": "MT3608",
+  "lcsc_mfr": "XI'AN Aerosemi Tech",
+  "lcsc_mpn": "MT3608",
+  "stock": 174145
+ }
+]

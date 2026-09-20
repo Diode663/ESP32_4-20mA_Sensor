@@ -69,8 +69,8 @@ PLACEMENT = {
     # --- Buttons below the module, pull-ups in the gap between them -------
     "SW1":  (10.50, 23.65, 0),     # RESET -> EN, up the left side
     "SW2":  (29.50, 23.65, 0),     # BOOT  -> IO0 (pin 27, lower right)
-    "R6":   (20.00, 21.00, 0),     # SCL pull-up at pin 17 (bottom edge)
-    "R15":  (20.00, 23.50, 0),     # MT_EN pull-up at pin 18, alongside it
+    "R15":  (20.00, 21.00, 0),     # MT_EN pull-up directly under pin 18: its track drops straight in
+    "R6":   (20.00, 23.50, 0),     # SCL pull-up below it, reached from the SCL run that passes on its way to U3
 
     # --- 3.3 V LDO: left, between the USB 5 V and its loads ---------------
     "U4":   (8.00, 32.00, 0),      # AP2112K

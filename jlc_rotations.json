@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "about": "CPL corrections for THIS board. Every polarised or multi-pin part was compared, pad number by pad number, with JLCPCB's own footprint for its exact LCSC number (easyeda2kicad --lcsc_id Cxxxx --footprint, 2026-09-20): the KiCad rotation that lays the board's pads onto theirs gives the correction (its negative), the residual gives the origin offset. Result: every footprint from the project library (D1 D2 D3 D5 J1 J2 L1 SW1 SW2 U1 U3 U4 U5) is already at JLCPCB's zero with zero offset -- they came from EasyEDA. D4 (stock D_SOD-123 vs their SOD-123F, cathode = pad 1 on both, their cathode bar is on the pad-1 side) and LED1 (stock LED_0805 vs their LED0805-RD) fit at 0. Only the four stock-KiCad transistor footprints differ: KiCad draws SOT-23 and SOT-223 with pin 1 top-left, JLCPCB's footprints for these parts have pin 1 bottom-right, i.e. 180 degrees. Origin offsets for them are under 0.1 mm and are not applied. None of this has been seen in JLCPCB's placement preview yet: verified stays false until it has.",
+  "rules": [],
+  "overrides": {
+    "Q1": {"rotation": 180, "verified": false,
+           "source": "C148109 BCP53-16: JLCPCB footprint SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR vs KiCad Package_TO_SOT_SMD:SOT-223, 4 pads matched at KiCad 180 deg, worst pad 0.27 mm (pad geometry, not angle)"},
+    "Q2": {"rotation": 180, "verified": false,
+           "source": "C8326 MMBT5401: JLCPCB footprint SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR vs KiCad SOT-23, 3 pads matched at KiCad 180 deg, worst pad 0.08 mm"},
+    "Q3": {"rotation": 180, "verified": false,
+           "source": "C15127 AO3401A: JLCPCB footprint SOT-23_L2.9-W1.3-P1.90-LS2.4-BR vs KiCad SOT-23, 3 pads matched at KiCad 180 deg, worst pad 0.28 mm (their pad rows sit further apart)"},
+    "Q4": {"rotation": 180, "verified": false,
+           "source": "C8545 2N7002: JLCPCB footprint SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR vs KiCad SOT-23, 3 pads matched at KiCad 180 deg, worst pad 0.08 mm"}
+  }
+}

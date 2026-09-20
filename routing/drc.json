@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-09-20T17:03:16",
+    "date": "2026-09-20T18:33:48",
     "ignored_checks": [
         {
             "description": "Footprint has no courtyard defined",
@@ -43,7 +43,7 @@
                         "x": 108.3,
                         "y": 103.59
                     },
-                    "uuid": "9124736f-3ad4-4814-9de5-96ccce6a7508"
+                    "uuid": "3d435e64-167e-4c1d-bc74-ddc92d62131f"
                 },
                 {
                     "description": "NPTH pad of J1",
@@ -51,7 +51,7 @@
                         "x": 108.61,
                         "y": 104.67
                     },
-                    "uuid": "7e6cab16-9d6b-49ec-8bd3-11dd433fc718"
+                    "uuid": "3d3bc611-98ae-416a-b062-b057d121f0bc"
                 }
             ],
             "severity": "error",
@@ -66,7 +66,7 @@
                         "x": 114.7,
                         "y": 103.59
                     },
-                    "uuid": "f75cf87b-d7ed-4b4a-81a2-6a259fd24adb"
+                    "uuid": "ad131b9e-0ff9-46d0-8172-760fcbec6504"
                 },
                 {
                     "description": "NPTH pad of J1",
@@ -74,7 +74,7 @@
                         "x": 114.39,
                         "y": 104.67
                     },
-                    "uuid": "12175112-1b5c-4c63-8e9a-faaeba8e0e70"
+                    "uuid": "8b975c18-7589-4805-84e7-5c4168b6a292"
                 }
             ],
             "severity": "error",
@@ -89,7 +89,7 @@
                         "x": 139.0,
                         "y": 111.0
                     },
-                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                    "uuid": "63075ce7-7f80-4f24-9288-4b4c9d37fd19"
                 },
                 {
                     "description": "Circle of J2 on F.Silkscreen",
@@ -97,7 +97,7 @@
                         "x": 118.07,
                         "y": 110.83
                     },
-                    "uuid": "acdb8ff4-c11c-4a1d-bf79-63632729eec5"
+                    "uuid": "71483c1d-d718-4ed4-bbc5-b4c680024d6c"
                 }
             ],
             "severity": "warning",
@@ -112,7 +112,7 @@
                         "x": 139.0,
                         "y": 111.0
                     },
-                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                    "uuid": "63075ce7-7f80-4f24-9288-4b4c9d37fd19"
                 },
                 {
                     "description": "Segment of J1 on F.Silkscreen",
@@ -120,7 +120,7 @@
                         "x": 107.0,
                         "y": 110.94
                     },
-                    "uuid": "6860659f-dfa8-4b4a-9fa8-3498cda663bd"
+                    "uuid": "448135a0-a674-421f-bc4a-0717049afdd7"
                 }
             ],
             "severity": "warning",
@@ -135,7 +135,7 @@
                         "x": 139.0,
                         "y": 111.0
                     },
-                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                    "uuid": "63075ce7-7f80-4f24-9288-4b4c9d37fd19"
                 },
                 {
                     "description": "Segment of J1 on F.Silkscreen",
@@ -143,7 +143,7 @@
                         "x": 116.0,
                         "y": 110.94
                     },
-                    "uuid": "6c1fb3cd-d80a-4513-9271-879d947ed009"
+                    "uuid": "37736ea5-ccdf-4d6e-ac6f-123e6712438a"
                 }
             ],
             "severity": "warning",
@@ -158,7 +158,7 @@
                         "x": 139.0,
                         "y": 111.0
                     },
-                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                    "uuid": "63075ce7-7f80-4f24-9288-4b4c9d37fd19"
                 },
                 {
                     "description": "Segment of J1 on F.Silkscreen",
@@ -166,34 +166,11 @@
                         "x": 116.07,
                         "y": 110.8
                     },
-                    "uuid": "0fa37bd7-9add-4ea4-b497-5f290f296da9"
+                    "uuid": "395fc3ea-33bd-49cc-84de-84e7ceebfe3f"
                 }
             ],
             "severity": "warning",
             "type": "silk_edge_clearance"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "Circle of J1 on F.Silkscreen",
-                    "pos": {
-                        "x": 107.05,
-                        "y": 103.32
-                    },
-                    "uuid": "f28912b4-457c-487a-b680-0a2adf3c32bb"
-                },
-                {
-                    "description": "PTH pad 13 [GND] of J1",
-                    "pos": {
-                        "x": 107.18,
-                        "y": 104.14
-                    },
-                    "uuid": "df2c50e5-c2bb-4f76-aaae-27df20825786"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
         },
         {
             "description": "Silkscreen clipped by solder mask",
@@ -204,7 +181,7 @@
                         "x": 125.0,
                         "y": 70.65
                     },
-                    "uuid": "9bf1f8ae-ab0e-47dd-b563-e05b5c7e5dfa"
+                    "uuid": "22761236-96a9-4765-8de6-ffdcf733b54f"
                 },
                 {
                     "description": "Pad 1 [/IO0] of SW2 on top_cu",
@@ -212,7 +189,7 @@
                         "x": 124.95,
                         "y": 71.4
                     },
-                    "uuid": "cb4f3e99-e9dc-4860-a2af-e2fc5e87905f"
+                    "uuid": "09addc0e-3124-48ed-9a28-2b9e8760931d"
                 }
             ],
             "severity": "warning",
@@ -227,7 +204,7 @@
                         "x": 106.0,
                         "y": 70.65
                     },
-                    "uuid": "23848334-da7c-4cd3-b1e5-01696a844e55"
+                    "uuid": "980c3325-7cee-468e-8d34-5f7524255b9a"
                 },
                 {
                     "description": "Pad 1 [/EN] of SW1 on top_cu",
@@ -235,7 +212,30 @@
                         "x": 105.95,
                         "y": 71.4
                     },
-                    "uuid": "c1c3dd01-9fce-4b68-b58f-1aac94cea29c"
+                    "uuid": "30ad06fe-e632-45e1-9283-b5f6ac4a3a36"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of J1 on F.Silkscreen",
+                    "pos": {
+                        "x": 107.05,
+                        "y": 103.32
+                    },
+                    "uuid": "1a498a4c-b89b-4fe7-9c5b-5867c4c506f3"
+                },
+                {
+                    "description": "PTH pad 13 [GND] of J1",
+                    "pos": {
+                        "x": 107.18,
+                        "y": 104.14
+                    },
+                    "uuid": "b831990d-ea05-47db-8416-cfabf9f15f19"
                 }
             ],
             "severity": "warning",

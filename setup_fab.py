@@ -12,8 +12,8 @@ Idempotent. It writes three things and moves nothing:
 
 Rule values are JLCPCB's no-surcharge tier with margin, read from their
 capabilities pages on 2026-09-20 for the USB-C / M.2 adapter and reused here:
-0.3 mm via holes, 0.127 mm track/space (limit 0.10), 0.3 mm copper to a
-routed edge (limit 0.2).
+0.3 mm via holes, 0.127 mm clearance floor, 0.5 mm copper to a routed edge
+(JLCPCB requires 0.3).
 
 Netclasses, and why each exists:
   USB     the ESP32-S3's native USB is FULL speed (12 Mbit/s), so impedance
@@ -68,7 +68,7 @@ CLASSES = {
         "via_diameter": 0.6, "via_drill": 0.3,
     },
     "GND": {
-        "track_width": 0.3, "clearance": 0.15,
+        "track_width": 0.3, "clearance": 0.2,
         "via_diameter": 0.6, "via_drill": 0.3,
     },
 }
@@ -81,23 +81,25 @@ PATTERNS = [
     ("GND", "GND"),
 ]
 
-DEFAULT_CLASS = {"track_width": 0.2, "clearance": 0.15, "via_diameter": 0.6, "via_drill": 0.3}
+DEFAULT_CLASS = {"track_width": 0.2, "clearance": 0.2, "via_diameter": 0.6, "via_drill": 0.3}
 
+# The board constraints are the ones this project already carried (README,
+# "Fabrication rules"): JLCPCB's published limits, or tighter where the board
+# was already tighter. Being tighter than the fab is a choice; looser is a defect.
 RULES = {
-    "min_clearance": 0.127,                 # limit 0.10
-    "min_track_width": 0.127,               # limit 0.10
-    "min_connection": 0.127,
+    "min_clearance": 0.127,
+    "min_track_width": 0.153,
+    "min_connection": 0.0,
     "min_via_diameter": 0.5,
-    "min_via_annular_width": 0.1,
-    "min_through_hole_diameter": 0.3,       # 0.15-0.25 mm holes cost more
+    "min_via_annular_width": 0.13,
+    "min_through_hole_diameter": 0.3,
     "min_hole_to_hole": 0.25,
     "min_hole_clearance": 0.2,              # J1's own pegs sit at 0.18 from its pads: a library fact, reported separately
-    "min_copper_edge_clearance": 0.3,       # routed edge limit 0.2
+    "min_copper_edge_clearance": 0.5,       # JLCPCB requires 0.3 and recommends 0.5
     "min_silk_clearance": 0.15,
     "min_text_height": 0.8,
     "min_text_thickness": 0.15,
-    "min_resolved_spokes": 1,               # 0402 pads beside other nets get one spoke; ample for signal ground
-    "solder_mask_to_copper_clearance": 0.0,
+    "min_resolved_spokes": 2,
     "max_error": 0.005,
     "use_height_for_length_calcs": True,
 }

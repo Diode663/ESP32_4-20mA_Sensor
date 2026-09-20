@@ -2,15 +2,26 @@
 """Generates the ESP32 4-20 mA ESPHome board schematic: one sheet.
 
 The design is small enough (~50 parts) that hierarchy only adds page-flipping,
-so the four functional sections are drawn as blocks on a single sheet, tiled
-in signal-flow order:
+so it is one sheet of titled blocks, ONE BLOCK PER CIRCUIT, in signal order:
 
-    POWER INPUT (USB-C, ESD, 3.3 V)    ->   MICROCONTROLLER (ESP32-S3)
-    24 V LOOP SUPPLY (MT3608 boost)    ->   4-20 mA LOOP (shunt, INA226)
+    USB-C input & ESD  ->  3.3 V regulator  ->  ESP32-S3 module
+    24 V boost converter  ->  loop current limiter  ->  loop terminal & measurement
+    test points, sheet notes
 
-Each section is built by its own function in its own working coordinates,
-then translated into place. Sections connect by net name: power rails through
-power-port symbols, USB_P/USB_N and I2C_SDA/I2C_SCL through net labels.
+A block is a whole circuit -- the boost converter with its load switch, input
+and output, not three boxes for the three of them; the module with its reset,
+boot, pull-ups and decoupling, not "module" and "support". That is how the
+reference sheets for these parts are drawn (Adafruit's ESP32-S3 Feather:
+"POWER AND FILTERING", "USB TO SERIAL CONVERTER", "LIPO CHARGING", and the
+module with everything that serves it in one region).
+
+Each block is drawn in its own working coordinates inside s.block_start() /
+s.block_end(). schlib derives the outline from what is inside -- parts, field
+text, labels, notes -- plus a margin, and arrange() flows the blocks across the
+page, so an outline can never cut through a label and no rectangle is typed by
+hand. check_text() then reads KiCad's own render and fails on any string that
+touches an outline. Blocks connect by net name: rails through power ports,
+signals through net labels.
 
     python generate_schematic.py [--force]
 
@@ -58,7 +69,7 @@ PARTS = {
     "U5":  (f"{LIB}:MT3608", "MT3608",
             fp("SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL"), "C84817", "Aerosemi", "MT3608"),
     "J1":  (f"{LIB}:TYPE-C16PIN2MD", "USB-C Receptacle",
-            fp("USB-C-SMD_TYPE-C-16PIN-2MD-073"), "C2765186", "Korean Hroparts Elec", "TYPE-C 16PIN 2MD(073)"),
+            fp("USB-C-SMD_TYPE-C-16PIN-2MD-073"), "C2765186", "SHOU HAN", "TYPE-C 16PIN 2MD(073)"),
     # One-piece push-in spring terminal (WAGO-250 style): a solid or ferruled
     # wire pushes straight in, the button releases it or opens it for bare
     # stranded. Three pins: GND, mA in, +24 V out. The ground pin is what lets
@@ -68,7 +79,7 @@ PARTS = {
     "J2":  (f"{LIB}:KF250NH-5.0-3P", "4-20mA Loop",
             fp("CONN-TH_KF250NH-5.0-3P"), "C976567", "Cixi Kefa", "KF250NH-5.0-3P"),
     "D1":  (f"{LIB}:USBLC6-2SC6_C2687116", "USBLC6-2SC6",
-            fp("SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL"), "C2687116", "Ampec/ST-compatible", "USBLC6-2SC6"),
+            fp("SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL"), "C2687116", "UMW", "USBLC6-2SC6"),
     "D2":  (f"{LIB}:SS34_C8678", "SS34",
             fp("SMA_L4.3-W2.6-LS5.2-RD"), "C8678", "MDD", "SS34"),
     # Both TVS parts share the project's unidirectional TVS symbol (1 = K, 2 = A).
@@ -81,13 +92,13 @@ PARTS = {
     "D4":  ("Diode:1N4148W", "1N4148W",
             "Diode_SMD:D_SOD-123", "C81598", "ST (Semtech)", "1N4148W"),
     "SW1": (f"{LIB}:KH-6X6X5H-STM", "RESET",
-            fp("SW-SMD_4P-L6.0-W6.0-P4.50-LS9.0_H5.0"), "C2837531", "Korean Hroparts Elec", "KH-6X6X5H-STM"),
+            fp("SW-SMD_4P-L6.0-W6.0-P4.50-LS9.0_H5.0"), "C2837531", "Kinghelm", "KH-6X6X5H-STM"),
     "SW2": (f"{LIB}:KH-6X6X5H-STM", "BOOT",
-            fp("SW-SMD_4P-L6.0-W6.0-P4.50-LS9.0_H5.0"), "C2837531", "Korean Hroparts Elec", "KH-6X6X5H-STM"),
+            fp("SW-SMD_4P-L6.0-W6.0-P4.50-LS9.0_H5.0"), "C2837531", "Kinghelm", "KH-6X6X5H-STM"),
     # 22 uH, the top of the MT3608's 4.7-22 uH range: at ~0.17 A average input
     # it quarters the ripple current of the old 4.7 uH. Isat 1.2 A.
     "L1":  (f"{LIB}:FNR4030S4R7MT", "22uH",
-            fp("IND-SMD_L4.0-W4.0_FNR40XXS"), "C167883", "Sunlord", "FNR4030S220MT"),
+            fp("IND-SMD_L4.0-W4.0_FNR40XXS"), "C167883", "cjiang", "FNR4030S220MT"),
 
     "R1":  ("Device:R", "10k",   "Resistor_SMD:R_0402_1005Metric", "C25744", "Uniroyal", "0402WGF1002TCE"),
     "R5":  ("Device:R", "4.7k",  "Resistor_SMD:R_0402_1005Metric", "C25900", "Uniroyal", "0402WGF4701TCE"),
@@ -95,9 +106,9 @@ PARTS = {
     "R7":  ("Device:R", "5.1k",  "Resistor_SMD:R_0402_1005Metric", "C25905", "Uniroyal", "0402WGF5101TCE"),
     "R8":  ("Device:R", "5.1k",  "Resistor_SMD:R_0402_1005Metric", "C25905", "Uniroyal", "0402WGF5101TCE"),
     "R9":  ("Device:R", "330",   "Resistor_SMD:R_0402_1005Metric", "C25104", "Uniroyal", "0402WGF3300TCE"),
-    "R10": ("Device:R", "390k",  "Resistor_SMD:R_0402_1005Metric", "C2909352", "Uniroyal", "FRC0402F3903TS"),   # C25782 had 14 in stock
+    "R10": ("Device:R", "390k",  "Resistor_SMD:R_0402_1005Metric", "C2909352", "FOJAN", "FRC0402F3903TS"),   # C25782 had 14 in stock
     "R11": ("Device:R", "10k",   "Resistor_SMD:R_0402_1005Metric", "C25744", "Uniroyal", "0402WGF1002TCE"),
-    "R12": ("Device:R", "3.32",  "Resistor_SMD:R_0805_2012Metric", "C3013220", "Uniroyal", "FRC0805F3R32TS"),
+    "R12": ("Device:R", "3.32",  "Resistor_SMD:R_0805_2012Metric", "C3013220", "FOJAN", "FRC0805F3R32TS"),
     "R13": ("Device:R", "10",    "Resistor_SMD:R_0402_1005Metric", "C25077", "Uniroyal", "0402WGF100JTCE"),
     "R14": ("Device:R", "10",    "Resistor_SMD:R_0402_1005Metric", "C25077", "Uniroyal", "0402WGF100JTCE"),
     "R15": ("Device:R", "100k",  "Resistor_SMD:R_0402_1005Metric", "C25741", "Uniroyal", "0402WGF1003TCE"),
@@ -113,9 +124,9 @@ PARTS = {
             "Package_TO_SOT_SMD:SOT-23", "C15127", "Alpha & Omega", "AO3401A"),
     "Q4":  ("Transistor_FET:2N7002", "2N7002",
             "Package_TO_SOT_SMD:SOT-23", "C8545", "JSCJ", "2N7002"),
-    "R21": ("Device:R", "390k",  "Resistor_SMD:R_0402_1005Metric", "C2909352", "Uniroyal", "FRC0402F3903TS"),
+    "R21": ("Device:R", "390k",  "Resistor_SMD:R_0402_1005Metric", "C2909352", "FOJAN", "FRC0402F3903TS"),
     "R22": ("Device:R", "100k",  "Resistor_SMD:R_0402_1005Metric", "C25741", "Uniroyal", "0402WGF1003TCE"),
-    "C12": ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "CCTC", "CL05B104KO5NNNC"),
+    "C12": ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "Samsung Electro-Mechanics", "CL05B104KO5NNNC"),
     # Q1 is SOT-223 because a constant-current limiter puts the whole rail
     # across it in a short: 24 V x 35 mA = 0.85 W. hFE >= 100 against 0.5 mA of
     # base drive from R17 supports 50 mA. Pins: 1 B, 2 and 4 (tab) C, 3 E.
@@ -125,17 +136,17 @@ PARTS = {
     "Q2":  ("Transistor_BJT:Q_PNP_BEC", "MMBT5401",
             "Package_TO_SOT_SMD:SOT-23", "C8326", "JSCJ", "MMBT5401"),
 
-    "C1":  ("Device:C", "1uF",      "Capacitor_SMD:C_0402_1005Metric", "C52923", "Samwha/CCTC", "CL05A105KA5NQNC"),
-    "C2":  ("Device:C", "22uF",     "Capacitor_SMD:C_0805_2012Metric", "C45783", "CCTC", "CL21A226MAQNNNE"),
-    "C3":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "CCTC", "CL05B104KO5NNNC"),
-    "C6":  ("Device:C", "1uF",      "Capacitor_SMD:C_0402_1005Metric", "C52923", "Samwha/CCTC", "CL05A105KA5NQNC"),
-    "C7":  ("Device:C", "10uF",     "Capacitor_SMD:C_0603_1608Metric", "C19702", "CCTC", "CL10A106KP8NNNC"),
-    "C8":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "CCTC", "CL05B104KO5NNNC"),
-    "C9":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "CCTC", "CL05B104KO5NNNC"),
-    "C10": ("Device:C", "10uF/50V", "Capacitor_SMD:C_1210_3225Metric", "C2918502", "Samsung/CCTC", "CS3225X7R106K500NRL"),
-    "C11": ("Device:C", "10uF/50V", "Capacitor_SMD:C_1210_3225Metric", "C2918502", "Samsung/CCTC", "CS3225X7R106K500NRL"),
+    "C1":  ("Device:C", "1uF",      "Capacitor_SMD:C_0402_1005Metric", "C52923", "Samsung Electro-Mechanics", "CL05A105KA5NQNC"),
+    "C2":  ("Device:C", "22uF",     "Capacitor_SMD:C_0805_2012Metric", "C45783", "Samsung Electro-Mechanics", "CL21A226MAQNNNE"),
+    "C3":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "Samsung Electro-Mechanics", "CL05B104KO5NNNC"),
+    "C6":  ("Device:C", "1uF",      "Capacitor_SMD:C_0402_1005Metric", "C52923", "Samsung Electro-Mechanics", "CL05A105KA5NQNC"),
+    "C7":  ("Device:C", "10uF",     "Capacitor_SMD:C_0603_1608Metric", "C19702", "Samsung Electro-Mechanics", "CL10A106KP8NNNC"),
+    "C8":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "Samsung Electro-Mechanics", "CL05B104KO5NNNC"),
+    "C9":  ("Device:C", "100nF",    "Capacitor_SMD:C_0402_1005Metric", "C1525",  "Samsung Electro-Mechanics", "CL05B104KO5NNNC"),
+    "C10": ("Device:C", "10uF/50V", "Capacitor_SMD:C_1210_3225Metric", "C2918502", "Samwha", "CS3225X7R106K500NRL"),
+    "C11": ("Device:C", "10uF/50V", "Capacitor_SMD:C_1210_3225Metric", "C2918502", "Samwha", "CS3225X7R106K500NRL"),
 
-    "LED1": ("Device:LED", "Power", "LED_SMD:LED_0805_2012Metric", "C84256", "Nichia-compatible", "NCD0805R1"),
+    "LED1": ("Device:LED", "Power", "LED_SMD:LED_0805_2012Metric", "C84256", "Nationstar", "NCD0805R1"),
 
     # Bare copper, not purchased parts: LCSC None marks them out of the BOM.
     # The value is the net, so the fab drawing and the board both name it.
@@ -237,9 +248,8 @@ NO_CONNECT = [
 # ===========================================================================
 # Sheet 1 -- USB-C input, ESD protection, 3.3 V regulation, power LED
 # ===========================================================================
-def build_usb_power(d):
-    s = d.sheet("01-usb-power.kicad_sch", "USB-C Input & 3.3 V Regulation", paper="A5",
-              comment="VBUS 5 V in, USB 2.0 ESD clamp, AP2112K LDO")
+def build_usb_power(s):
+    s.block_start("USB-C INPUT & ESD PROTECTION")
 
     # ---- USB-C receptacle -------------------------------------------------
     put(s, "J1", 45.72, 67.31, 180)
@@ -307,12 +317,15 @@ def build_usb_power(d):
     s.wire(s.pin("D1", "3"), (101.6, 82.55), (106.68, 82.55))
     s.label("USB_N", 106.68, 82.55)
     s.wire(s.pin("D1", "6"), (96.52, 49.53), (91.44, 49.53))
-    s.hlabel("USB_P", 91.44, 49.53, 180)
+    s.label("USB_P", 91.44, 49.53, 180)
     s.wire(s.pin("D1", "4"), (101.6, 49.53), (106.68, 49.53))
-    s.hlabel("USB_N", 106.68, 49.53)
+    s.label("USB_N", 106.68, 49.53)
     s.note("D1 ESD clamp\n15 kV air /\n8 kV contact\n(IEC 61000-4-2)", 105.41, 60.96, 1.0)
 
+    s.block_end()
+
     # ---- 3.3 V LDO --------------------------------------------------------
+    s.block_start("3.3 V REGULATOR & POWER LED")
     put(s, "U4", 152.4, 66.04)
     put(s, "C6", 133.35, 69.85)      # 5 V input cap
     put(s, "C7", 187.96, 69.85)      # 3.3 V output cap
@@ -359,21 +372,15 @@ def build_usb_power(d):
     s.gnd(140.97, 140.97)
     s.note("Power LED: (3.3 - 1.9) / 330 = 4.2 mA", 149.86, 130.81, 1.0)
 
-    s.box(16.51, 45.72, 118.11, 146.05)
-    s.note("USB-C INPUT & ESD", 16.51, 43.18, 1.6, bold=True)
-    s.box(120.65, 45.72, 200.66, 104.14)
-    s.note("3.3 V REGULATION", 120.65, 43.18, 1.6, bold=True)
-    s.box(120.65, 106.68, 200.66, 146.05)
-    s.note("STATUS", 120.65, 111.76 - 7.62, 1.6, bold=True)
-    return s
+    s.block_end()
 
 
 # ===========================================================================
 # Sheet 2 -- ESP32-S3 module, reset & boot, I2C pull-ups
 # ===========================================================================
-def build_mcu(d):
-    s = d.sheet("02-mcu.kicad_sch", "ESP32-S3 Module, Reset & Boot", paper="A5",
-              comment="Native-USB ESP32-S3-WROOM-1U-N4 (U.FL antenna); no UART bridge required")
+def build_mcu(s):
+    # Native-USB ESP32-S3-WROOM-1U-N4 (U.FL antenna); no UART bridge required
+    s.block_start("ESP32-S3 MODULE  -  reset, boot, I2C pull-ups, decoupling")
 
     put(s, "U1", 152.4, 96.52)
 
@@ -419,13 +426,13 @@ def build_mcu(d):
     put(s, "R5", 88.9, 88.9)      # SDA
     put(s, "R6", 71.12, 88.9)     # SCL
     s.wire(s.pin("U1", "12"), (81.28, 101.6))
-    s.hlabel("I2C_SDA", 81.28, 101.6, 180)
+    s.label("I2C_SDA", 81.28, 101.6, 180)
     s.wire(s.pin("R5", "2"), (88.9, 101.6))
     s.wire(s.pin("R5", "1"), (88.9, 81.28))
     s.power("+3V3", 88.9, 81.28)
 
     s.wire(s.pin("U1", "17"), (66.04, 114.3))
-    s.hlabel("I2C_SCL", 66.04, 114.3, 180)
+    s.label("I2C_SCL", 66.04, 114.3, 180)
     s.wire(s.pin("R6", "2"), (71.12, 114.3))
     s.wire(s.pin("R6", "1"), (71.12, 81.28))
     s.power("+3V3", 71.12, 81.28)
@@ -436,13 +443,13 @@ def build_mcu(d):
     # other use here. R15 on the boost sheet holds it high, so the loop
     # supply comes up with the board and firmware can switch it off.
     s.wire(s.pin("U1", "18"), (76.2, 116.84))
-    s.hlabel("MT_EN", 76.2, 116.84, 180)
+    s.label("MT_EN", 76.2, 116.84, 180)
 
     # ---- Native USB -------------------------------------------------------
     s.wire(s.pin("U1", "13"), (82.55, 104.14))
-    s.hlabel("USB_N", 82.55, 104.14, 180)
+    s.label("USB_N", 82.55, 104.14, 180)
     s.wire(s.pin("U1", "14"), (82.55, 106.68))
-    s.hlabel("USB_P", 82.55, 106.68, 180)
+    s.label("USB_P", 82.55, 106.68, 180)
 
     # ---- Boot strap button -----------------------------------------------
     put(s, "SW2", 177.8, 134.62)
@@ -479,19 +486,15 @@ def build_mcu(d):
     used = {"1", "2", "3", "12", "13", "14", "17", "18", "27", "40", "41"}
     s.nc("U1", *[n for n in [str(i) for i in range(1, 42)] if n not in used])
 
-    s.box(60.96, 58.42, 143.51, 151.13)
-    s.note("SUPPORT CIRCUITRY", 60.96, 55.88, 1.6, bold=True)
-    s.box(146.05, 58.42, 196.85, 151.13)
-    s.note("ESP32-S3 MODULE", 146.05, 55.88, 1.6, bold=True)
-    return s
+    s.block_end()
 
 
 # ===========================================================================
 # Sheet 3 -- MT3608 boost converter, 5 V -> 24 V loop supply
 # ===========================================================================
-def build_boost(d):
-    s = d.sheet("03-boost-24v.kicad_sch", "24 V Loop Supply (MT3608 Boost)", paper="A5",
-              comment="5 V -> 24 V @ 30 mA for the 2-wire 4-20 mA transmitter")
+def build_boost(s):
+    # 5 V -> 24 V @ 30 mA for the 2-wire 4-20 mA transmitter
+    s.block_start("24 V BOOST CONVERTER  -  soft-start load switch, MT3608, feedback")
 
     put(s, "U5", 152.4, 91.44, 180)
     put(s, "L1", 127.0, 76.2)
@@ -563,8 +566,6 @@ def build_boost(d):
     s.note("R21/R22 leave Vgs at -4.0 V; C12 x (R21 || R22) = 8 ms.", 43.18 + X, 101.6, 1.0)
     s.note("VBUS sees 1 uF at attach, not 27 uF (USB limit 10 uF),", 43.18 + X, 104.14, 1.0)
     s.note("and MT_EN low now truly disconnects the loop supply.", 43.18 + X, 106.68, 1.0)
-    s.box(43.18 + X, 50.8, 99.06 + X, 97.79)
-    s.note("SOFT-START LOAD SWITCH", 43.18 + X, 48.26, 1.6, bold=True)
 
     # ---- Switch node, ground and feedback --------------------------------
     # SW, GND and FB all leave the same flank of U5 in the order FB / GND / SW,
@@ -596,22 +597,6 @@ def build_boost(d):
     s.wire((218.44, 76.2), (218.44, 68.58))
     s.power("PWR_FLAG", 218.44, 68.58)
 
-    # ---- Test points -----------------------------------------------------
-    # Bring-up access for the five nets worth probing. They join their nets by
-    # name, so they live here in the one piece of free sheet rather than being
-    # threaded into the dense sections they belong to. Rotated 180 so the pad
-    # symbol hangs below its pin and the wire can run up to the label.
-    s.note("TEST POINTS", 96.52, 144.78, 1.4, bold=True)
-    for ref, x in (("TP1", 106.68), ("TP2", 119.38), ("TP3", 132.08),
-                   ("TP4", 144.78), ("TP5", 157.48)):
-        put(s, ref, x, 157.48, 180)
-        s.wire(s.pin(ref, "1"), (x, 152.4))
-    s.label("LOOP_V", 106.68, 152.4)
-    s.label("LOOP_RTN", 119.38, 152.4)
-    s.power("+24V", 132.08, 152.4)
-    s.power("+3V3", 144.78, 152.4)
-    s.label("MT_EN", 157.48, 152.4)
-
     s.note("FEEDBACK MATH", 96.52, 114.3, 1.4, bold=True)
     s.note("Vout = Vref x (1 + R10/R11), Vref = 0.6 V", 96.52, 119.38, 1.0)
     s.note("     = 0.6 x (1 + 390k/10k) = 24.00 V", 96.52, 121.92, 1.0)
@@ -621,21 +606,95 @@ def build_boost(d):
     s.note("D2 (SS34) and C11 are rated 40 V / 50 V for margin", 96.52, 134.62, 1.0)
     s.note("over the 24 V rail; U5's SW pin is the tight one, 30 V.", 96.52, 137.16, 1.0)
 
-    s.box(96.52, 55.88, 143.51, 106.68)
-    s.note("BOOST INPUT", 96.52, 53.34, 1.6, bold=True)
-    s.box(146.05, 55.88, 189.23, 106.68)
-    s.note("BOOST CONTROLLER", 146.05, 53.34, 1.6, bold=True)
-    s.box(191.77, 55.88, 234.95, 116.84)
-    s.note("24 V OUTPUT & FEEDBACK", 191.77, 53.34, 1.6, bold=True)
-    return s
+    s.block_end()
+
+
+def build_test_points(s):
+    s.block_start("TEST POINTS")
+    # ---- Test points -----------------------------------------------------
+    # Bring-up access for the five nets worth probing. They join their nets by
+    # name, so they live here in the one piece of free sheet rather than being
+    # threaded into the dense sections they belong to. Rotated 180 so the pad
+    # symbol hangs below its pin and the wire can run up to the label.
+    for ref, x in (("TP1", 106.68), ("TP2", 119.38), ("TP3", 132.08),
+                   ("TP4", 144.78), ("TP5", 157.48)):
+        put(s, ref, x, 157.48, 180)
+        s.wire(s.pin(ref, "1"), (x, 152.4))
+    s.label("LOOP_V", 106.68, 152.4)
+    s.label("LOOP_RTN", 119.38, 152.4)
+    s.power("+24V", 132.08, 152.4)
+    s.power("+3V3", 144.78, 152.4)
+    s.label("MT_EN", 157.48, 152.4)
+    s.block_end()
+
+
+# ===========================================================================
+# Loop current limiter
+# ===========================================================================
+def build_limiter(s):
+    s.block_start("LOOP CURRENT LIMITER  -  35 mA constant current, reverse blocking")
+
+    # ---- Current limiter -------------------------------------------------
+    # Q1 passes the loop current; R16 senses it; Q2 robs Q1's base drive at
+    # the limit. Constant current, deliberately NOT foldback: a 2-wire
+    # transmitter is a constant-current load, and Rev F's foldback could park
+    # one at ~9 V / 14 mA after a short or a hot-plug -- a plausible, wrong
+    # reading (sim/recover.py). Q1 is SOT-223 to carry a dead short instead.
+    # D4 stops LOOP_V driving Q1 backwards into the rail, which it did from
+    # ~25 V, long before the TVS ever conducted (sim/4_reverse_conduction.py).
+    put(s, "R16", 157.48, 137.16)
+    put(s, "Q1", 160.02, 149.86, 180)      # E up, C down, B to the right
+    put(s, "Q2", 195.58, 142.24, 0, mirror="x")   # KiCad's canonical form for a 180+mirror-y flip
+    put(s, "R17", 165.1, 158.75)
+    put(s, "R18", 215.9, 137.16)
+    put(s, "D4", 157.48, 161.29, 90)       # anode up at Q1's collector
+
+    s.wire((157.48, 130.81), s.pin("R16", "1"))
+    s.power("+24V", 157.48, 130.81)
+    s.wire(s.pin("R16", "2"), s.pin("Q1", "3"))
+    s.wire((157.48, 142.24), (151.13, 142.24))
+    s.label("LOOP_SNS", 151.13, 142.24, 180)
+
+    # pins 2 and 4 are both the collector (4 is the tab)
+    s.wire(s.pin("Q1", "2"), s.pin("Q1", "4"), (149.86, 154.94))
+    s.label("LOOP_C", 149.86, 154.94, 180)
+    s.wire(s.pin("Q1", "2"), s.pin("D4", "2"))
+    s.wire(s.pin("D4", "1"), (157.48, 167.64), (151.13, 167.64))
+    s.label("LOOP_V", 151.13, 167.64, 180)
+    # base drive is a real wire down to R17; only Q2's collector joins by label
+    s.wire(s.pin("Q1", "1"), s.pin("R17", "1"))
+    s.label("LOOP_DRV", 165.1, 152.4)
+
+    s.wire(s.pin("Q2", "2"), (198.12, 132.08))
+    s.power("+24V", 198.12, 132.08)
+    s.wire(s.pin("Q2", "3"), (198.12, 152.4), (186.69, 152.4))
+    s.label("LOOP_DRV", 186.69, 152.4, 180)
+    s.wire(s.pin("Q2", "1"), (184.15, 142.24))
+    s.label("LOOP_FB", 184.15, 142.24, 180)
+
+    s.wire(s.pin("R17", "2"), (165.1, 165.1))
+    s.gnd(165.1, 165.1)
+
+    # a short stub: the label's text runs left, toward Q2's +24V port
+    s.wire(s.pin("R18", "1"), (215.9, 130.81), (213.36, 130.81))
+    s.label("LOOP_SNS", 213.36, 130.81, 180)
+    s.wire(s.pin("R18", "2"), (215.9, 143.51), (222.25, 143.51))
+    s.label("LOOP_FB", 222.25, 143.51)
+
+    s.note("Ilim = Vbe(Q2) / R16: 35 / 33 / 27 mA at", 96.52, 137.16, 1.0)
+    s.note("-20 / 25 / 85 C, so 24 mA always reads.", 96.52, 139.7, 1.0)
+    s.note("Dead short: 24 V x 35 mA = 0.85 W in Q1,", 96.52, 142.24, 1.0)
+    s.note("hence SOT-223. R16 + Q1 + D4 cost 1.2 V:", 96.52, 144.78, 1.0)
+    s.note("22.8 V at J2 with 20 mA flowing.", 96.52, 147.32, 1.0)
+    s.block_end()
 
 
 # ===========================================================================
 # Sheet 4 -- 4-20 mA loop terminal, shunt, INA226 current sense
 # ===========================================================================
-def build_loop_sense(d):
-    s = d.sheet("04-loop-sense.kicad_sch", "4-20 mA Loop & INA226 Current Sense", paper="A5",
-              comment="Low-side 3.32 ohm shunt, INA226 at I2C address 0x40")
+def build_loop_sense(s):
+    # Low-side 3.32 ohm shunt, INA226 at I2C address 0x40
+    s.block_start("LOOP TERMINAL & CURRENT MEASUREMENT  -  TVS, shunt, filter, INA226")
 
     put(s, "U3", 152.4, 88.9)
     # flipped top-to-bottom so pin 3 (+24 V) is uppermost and the wiring below
@@ -653,17 +712,17 @@ def build_loop_sense(d):
     put(s, "C8", 168.91, 106.68)
 
     # ---- Address pins strapped low (I2C 0x40) ----------------------------
-    s.wire(s.pin("U3", "1"), (132.08, 83.82))
-    s.gnd(132.08, 83.82)
-    s.wire(s.pin("U3", "2"), (135.89, 86.36))
-    s.gnd(135.89, 86.36)
+    # one ground for both: two ports side by side crowded the Alert pin below them
+    s.wire(s.pin("U3", "1"), (129.54, 83.82))
+    s.wire(s.pin("U3", "2"), (134.62, 86.36), (134.62, 83.82))
+    s.gnd(129.54, 83.82)
     s.nc("U3", "3")
 
     # ---- I2C --------------------------------------------------------------
     s.wire(s.pin("U3", "4"), (127.0, 91.44))
-    s.hlabel("I2C_SDA", 127.0, 91.44, 180)
+    s.label("I2C_SDA", 127.0, 91.44, 180)
     s.wire(s.pin("U3", "5"), (127.0, 93.98))
-    s.hlabel("I2C_SCL", 127.0, 93.98, 180)
+    s.label("I2C_SCL", 127.0, 93.98, 180)
 
     # ---- Supply + decoupling ---------------------------------------------
     s.wire(s.pin("U3", "6"), (172.72, 93.98), (172.72, 99.06), (168.91, 99.06))
@@ -728,144 +787,56 @@ def build_loop_sense(d):
     s.wire(s.pin("D5", "2"), (226.06, 120.65))
     s.gnd(226.06, 120.65)
 
-    # ---- Current limiter -------------------------------------------------
-    # Q1 passes the loop current; R16 senses it; Q2 robs Q1's base drive at
-    # the limit. Constant current, deliberately NOT foldback: a 2-wire
-    # transmitter is a constant-current load, and Rev F's foldback could park
-    # one at ~9 V / 14 mA after a short or a hot-plug -- a plausible, wrong
-    # reading (sim/recover.py). Q1 is SOT-223 to carry a dead short instead.
-    # D4 stops LOOP_V driving Q1 backwards into the rail, which it did from
-    # ~25 V, long before the TVS ever conducted (sim/4_reverse_conduction.py).
-    put(s, "R16", 157.48, 137.16)
-    put(s, "Q1", 160.02, 149.86, 180)      # E up, C down, B to the right
-    put(s, "Q2", 195.58, 142.24, 0, mirror="x")   # KiCad's canonical form for a 180+mirror-y flip
-    put(s, "R17", 165.1, 158.75)
-    put(s, "R18", 215.9, 137.16)
-    put(s, "D4", 157.48, 161.29, 90)       # anode up at Q1's collector
+    s.note("SHUNT SIZING", 121.92, 116.84, 1.4, bold=True)
+    s.note("R12 = 3.32 ohm: the INA226's +/-81.92 mV full scale", 121.92, 121.92, 1.0)
+    s.note("then reaches 24.67 mA, so a sensor driving 23.5 mA", 121.92, 124.46, 1.0)
+    s.note("over-range still reads instead of clipping.", 121.92, 127.0, 1.0)
+    s.note("24 mA x 3.32 = 79.7 mV (97% of range); LSB 2.5 uV", 121.92, 129.54, 1.0)
+    s.note("-> 0.75 uA. Dissipation at 24 mA = 1.9 mW (0805).", 121.92, 132.08, 1.0)
+    s.note("R13/R14 + C9 form a 10 ohm / 100 nF differential", 121.92, 137.16, 1.0)
+    s.note("input filter (fc ~ 80 kHz). Keep the R12 ground end", 121.92, 139.7, 1.0)
+    s.note("and R14 on the same node -- Kelvin return.", 121.92, 142.24, 1.0)
+    s.note("D3/D5 clamp each field wire to ground: 45 V / 20 V.", 121.92, 147.32, 1.0)
+    s.note("R20 holds D3's clamp into U3's 40 V bus pin to", 121.92, 149.86, 1.0)
+    s.note("0.5 mA of its 5 mA rating (costs 1.19% of gain).", 121.92, 152.4, 1.0)
+    s.note("J2: 1 = GND, 2 = mA in, 3 = +24 V out.", 121.92, 157.48, 1.0)
+    s.note("2-wire sensor on 3-2; sourcing sensor on 2-1.", 121.92, 160.02, 1.0)
 
-    s.wire((157.48, 130.81), s.pin("R16", "1"))
-    s.power("+24V", 157.48, 130.81)
-    s.wire(s.pin("R16", "2"), s.pin("Q1", "3"))
-    s.wire((157.48, 142.24), (151.13, 142.24))
-    s.label("LOOP_SNS", 151.13, 142.24, 180)
-
-    # pins 2 and 4 are both the collector (4 is the tab)
-    s.wire(s.pin("Q1", "2"), s.pin("Q1", "4"), (149.86, 154.94))
-    s.label("LOOP_C", 149.86, 154.94, 180)
-    s.wire(s.pin("Q1", "2"), s.pin("D4", "2"))
-    s.wire(s.pin("D4", "1"), (157.48, 167.64), (151.13, 167.64))
-    s.label("LOOP_V", 151.13, 167.64, 180)
-    # base drive is a real wire down to R17; only Q2's collector joins by label
-    s.wire(s.pin("Q1", "1"), s.pin("R17", "1"))
-    s.label("LOOP_DRV", 165.1, 152.4)
-
-    s.wire(s.pin("Q2", "2"), (198.12, 132.08))
-    s.power("+24V", 198.12, 132.08)
-    s.wire(s.pin("Q2", "3"), (198.12, 152.4), (186.69, 152.4))
-    s.label("LOOP_DRV", 186.69, 152.4, 180)
-    s.wire(s.pin("Q2", "1"), (184.15, 142.24))
-    s.label("LOOP_FB", 184.15, 142.24, 180)
-
-    s.wire(s.pin("R17", "2"), (165.1, 165.1))
-    s.gnd(165.1, 165.1)
-
-    s.wire(s.pin("R18", "1"), (215.9, 130.81), (209.55, 130.81))
-    s.label("LOOP_SNS", 209.55, 130.81, 180)
-    s.wire(s.pin("R18", "2"), (215.9, 143.51), (222.25, 143.51))
-    s.label("LOOP_FB", 222.25, 143.51)
-
-    s.note("SHUNT SIZING", 96.52, 116.84, 1.4, bold=True)
-    s.note("R12 = 3.32 ohm: the INA226's +/-81.92 mV full scale", 96.52, 121.92, 1.0)
-    s.note("then reaches 24.67 mA, so a sensor driving 23.5 mA", 96.52, 124.46, 1.0)
-    s.note("over-range still reads instead of clipping.", 96.52, 127.0, 1.0)
-    s.note("24 mA x 3.32 = 79.7 mV (97% of range); LSB 2.5 uV", 96.52, 129.54, 1.0)
-    s.note("-> 0.75 uA. Dissipation at 24 mA = 1.9 mW (0805).", 96.52, 132.08, 1.0)
-    s.note("R13/R14 + C9 form a 10 ohm / 100 nF differential", 96.52, 137.16, 1.0)
-    s.note("input filter (fc ~ 80 kHz). Keep the R12 ground end", 96.52, 139.7, 1.0)
-    s.note("and R14 on the same node -- Kelvin return.", 96.52, 142.24, 1.0)
-    s.note("D3/D5 clamp each field wire to ground: 45 V / 20 V.", 96.52, 147.32, 1.0)
-    s.note("R20 holds D3's clamp into U3's 40 V bus pin to", 96.52, 149.86, 1.0)
-    s.note("0.5 mA of its 5 mA rating (costs 1.19% of gain).", 96.52, 152.4, 1.0)
-    s.note("LIMITER", 96.52, 157.48, 1.4, bold=True)
-    s.note("Ilim = Vbe(Q2) / R16: 35 / 33 / 27 mA at", 96.52, 162.56, 1.0)
-    s.note("-20 / 25 / 85 C, so 24 mA always reads.", 96.52, 165.1, 1.0)
-    s.note("Dead short: 24 V x 35 mA = 0.85 W in Q1,", 96.52, 167.64, 1.0)
-    s.note("hence SOT-223. R16 + Q1 + D4 cost 1.2 V:", 96.52, 170.18, 1.0)
-    s.note("22.8 V at J2 with 20 mA flowing.", 96.52, 172.72, 1.0)
-    s.note("J2: 1 = GND, 2 = mA in, 3 = +24 V out.", 96.52, 177.8, 1.0)
-    s.note("2-wire sensor on 3-2; sourcing sensor on 2-1.", 96.52, 180.34, 1.0)
-
-    s.box(121.92, 55.88, 180.34, 111.76)
-    s.note("INA226 CURRENT MONITOR", 121.92, 53.34, 1.6, bold=True)
-    s.box(182.88, 55.88, 250.19, 128.27)
-    s.note("SHUNT, FILTER & FIELD TERMINAL", 182.88, 53.34, 1.6, bold=True)
-    s.box(140.97, 133.35, 231.14, 173.99)
-    # starts right of R16's +24 V feed so the title clears it
-    s.note("CURRENT LIMITER", 163.83, 130.81, 1.6, bold=True)
-    return s
+    s.block_end()
 
 
 # ===========================================================================
-# One sheet: tile the four sections 2 x 2 in signal-flow order
+# One sheet: one block per circuit, declared in signal order; arrange() flows them
 # ===========================================================================
-GAP = 12.7          # clear space between sections
-HEAD = 10.16        # room above each section for its heading
-
-SECTIONS = [
-    # builder, column, row, heading
-    (build_usb_power,  0, 0, "POWER INPUT  -  USB-C, ESD protection, 3.3 V regulation"),
-    (build_mcu,        1, 0, "MICROCONTROLLER  -  ESP32-S3 module, reset and boot"),
-    (build_boost,      0, 1, "24 V LOOP SUPPLY  -  MT3608 boost converter"),
-    (build_loop_sense, 1, 1,
-     "4-20 mA LOOP  -  current limiter, shunt, input filter and INA226"),
-]
+BUILDERS = [build_usb_power, build_mcu, build_boost, build_limiter, build_loop_sense,
+            build_test_points]
 
 
-def merge(dst, src):
-    """Copy a section's drawing onto the real sheet. Hierarchical labels become
-    plain net labels: on one sheet, same-named labels are the same net."""
-    dst.symbols += src.symbols
-    dst.segments += src.segments
-    dst.labels += [("label", n, x, y, a, j, None) if k == "hierarchical_label"
-                   else (k, n, x, y, a, j, sh)
-                   for k, n, x, y, a, j, sh in src.labels]
-    dst.no_connects += src.no_connects
-    dst.texts += src.texts
-    dst.rects += src.rects
+def build_notes(s):
+    """Sheet-level notes: a layout group of its own, so it flows with the blocks."""
+    s.block_start("POWER RAILS & SIGNAL LINKS")
+    s.note("POWER RAILS  (global power ports)", 25.4, 25.4, 1.27, bold=True)
+    s.note("+5V    USB-C VBUS -> LDO, load switch\n"
+           "+3V3   LDO -> ESP32-S3, INA226\n"
+           "+24V   boost -> limiter -> loop terminal\n"
+           "GND    single ground plane", 25.4, 30.48, 1.0)
+    s.note("SIGNAL LINKS  (net labels)", 25.4, 45.72, 1.27, bold=True)
+    s.note("USB_P / USB_N        USB-C -> ESP32-S3\n"
+           "I2C_SDA / I2C_SCL    ESP32-S3 -> INA226\n"
+           "MT_EN                ESP32-S3 -> load switch\n"
+           "LOOP_V / LOOP_RTN    limiter -> terminal -> shunt", 25.4, 50.8, 1.0)
+    s.block_end()
 
 
 def build_flat(d):
-    built = [(fn(d), col, row, head) for fn, col, row, head in SECTIONS]
-    d.children.clear()      # the section sheets were only drawing scratchpads
     s = d.sheet(ROOT_FILE, "ESP32 4-20 mA ESPHome Sensor Board", paper="auto",
                 comment="USB-C powered 4-20 mA loop reader with onboard 24 V loop supply")
-
-    bbox = {id(b): b.content_bbox() for b, *_ in built}
-    colw = [max(bbox[id(b)][2] - bbox[id(b)][0] for b, c, _r, _h in built if c == i)
-            for i in (0, 1)]
-    rowh = [max(bbox[id(b)][3] - bbox[id(b)][1] for b, _c, r, _h in built if r == i)
-            for i in (0, 1)]
-
-    for b, col, row, head in built:
-        x0, y0, x1, _y1 = bbox[id(b)]
-        left = sum(colw[:col]) + GAP * col
-        top = sum(rowh[:row]) + (GAP + HEAD) * row + HEAD
-        b.translate(snap(left - x0), snap(top - y0))
-        merge(s, b)
-        s.note(head, snap(left), snap(top - HEAD + 3.81), 2.0, bold=True)
-        if (col, row) == (0, 1):
-            # The power-input section sets column 0's width, so there is free
-            # space right of the narrower boost section: use it for the
-            # sheet-level notes the hierarchical root used to carry.
-            nx, ny = snap(left + (x1 - x0) + 7.62), snap(top + 5.08)
-            s.note("POWER RAILS  (global power ports)", nx, ny, 1.27, bold=True)
-            s.note("+5V    USB-C VBUS -> LDO, boost\n"
-                   "+3V3   LDO -> ESP32-S3, INA226\n"
-                   "+24V   boost -> loop terminal\n"
-                   "GND    single ground plane", nx, ny + 5.08, 1.0)
-            s.note("SECTION LINKS  (net labels)", nx, ny + 17.78, 1.27, bold=True)
-            s.note("USB_P / USB_N    USB-C -> ESP32-S3\n"
-                   "I2C_SDA / I2C_SCL  ESP32-S3 -> INA226", nx, ny + 22.86, 1.0)
+    for fn in BUILDERS:
+        fn(s)
+    build_notes(s)
+    # relieve=False: the wiring inside each block is hand-drawn and already
+    # clean; only the blocks' places on the page are computed
+    s.arrange(relieve=False)
     return s
 
 
@@ -877,7 +848,7 @@ def main():
     d = Design(PROJDIR, "esp32-4to20ma-board", title="ESP32 4-20 mA ESPHome Sensor Board",
                rev=REV, date=DATE)
     build_flat(d)
-    d.write(force=args.force)
+    d.write(force=args.force, relieve=False)
     ok = d.verify(NETS, NO_CONNECT)
     d.erc()
     d.check_text()
