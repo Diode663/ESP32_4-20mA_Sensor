@@ -40,6 +40,9 @@ things this board's firmware had to do are done there:
    drift and R20's fixed gain error all come out together; one point cannot
    remove them.
 
+The firmware is a reusable ESPHome package, pulled by URL, so another board
+built from this design tracks the same definition.
+
 It also classifies faults to NAMUR NE43 and detects a backwards-wired sourcing
 transmitter, which reads as negative current through the shunt. Validated on
 ESPHome 2026.9.0: config clean, and it compiles to 47 % of the N4's

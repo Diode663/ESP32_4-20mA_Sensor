@@ -1,0 +1,43 @@
+2026-09-20 17:02:31.580 INFO   Freerouting v2.4.1 (build-date: 2026-09-03)
+2026-09-20 17:02:33.072 INFO   [3EC59B\D2B876] Loading board file 'esp32-4to20ma-board.dsn'...
+2026-09-20 17:02:33.161 INFO   [3EC59B\D2B876] Job '3EC59B\D2B876' started at 2026-09-20T21:02:33.160373300Z.
+2026-09-20 17:02:33.263 INFO   [3EC59B\D2B876] Auto-routing stage started on board 'a51ae77d2634a5129f73999120cf3f38' for 45 unrouted items.
+2026-09-20 17:02:38.077 INFO   [3EC59B\D2B876] Auto-routing pass #1 on board 'a51ae77d2634a5129f73999120cf3f38' was completed in 4.43 seconds with score 847.88 (16 unrouted and 28 violations), using 3.69 CPU seconds and the job allocated 13.62 GB of memory so far.
+2026-09-20 17:02:40.633 INFO   [3EC59B\D2B876] Auto-routing pass #2 on board '5f15085b5b24c09d624fb278127a7707' was completed in 2.10 seconds with score 883.09 (11 unrouted and 28 violations), using 6.53 CPU seconds and the job allocated 26.54 GB of memory so far.
+2026-09-20 17:02:42.766 INFO   [3EC59B\D2B876] Auto-routing pass #3 on board '36fa357396156538f061cf473c46905f' was completed in 1.73 seconds with score 911.26 (7 unrouted and 28 violations), using 8.45 CPU seconds and the job allocated 34.88 GB of memory so far.
+2026-09-20 17:02:44.295 INFO   [3EC59B\D2B876] Auto-routing pass #4 on board '29cb3e7ff941da13c32f057078c7e3d8' was completed in 1.13 seconds with score 918.30 (6 unrouted and 28 violations), using 10.44 CPU seconds and the job allocated 44.41 GB of memory so far.
+2026-09-20 17:02:45.581 INFO   [3EC59B\D2B876] Auto-routing pass #5 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.86 seconds with score 918.30 (6 unrouted and 28 violations), using 11.38 CPU seconds and the job allocated 49.31 GB of memory so far.
+2026-09-20 17:02:46.655 INFO   [3EC59B\D2B876] Auto-routing pass #6 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.86 seconds with score 918.30 (6 unrouted and 28 violations), using 12.27 CPU seconds and the job allocated 54.05 GB of memory so far.
+2026-09-20 17:02:47.765 INFO   [3EC59B\D2B876] Auto-routing pass #7 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.90 seconds with score 918.30 (6 unrouted and 28 violations), using 13.22 CPU seconds and the job allocated 59.11 GB of memory so far.
+2026-09-20 17:02:49.032 INFO   [3EC59B\D2B876] Auto-routing pass #8 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 1.05 seconds with score 918.30 (6 unrouted and 28 violations), using 14.22 CPU seconds and the job allocated 63.25 GB of memory so far.
+2026-09-20 17:02:50.269 INFO   [3EC59B\D2B876] Auto-routing pass #9 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.97 seconds with score 918.30 (6 unrouted and 28 violations), using 15.14 CPU seconds and the job allocated 67.24 GB of memory so far.
+2026-09-20 17:02:51.432 INFO   [3EC59B\D2B876] Auto-routing pass #10 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.88 seconds with score 918.30 (6 unrouted and 28 violations), using 17.05 CPU seconds and the job allocated 76.05 GB of memory so far.
+2026-09-20 17:02:52.633 INFO   [3EC59B\D2B876] Auto-routing pass #11 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.96 seconds with score 918.30 (6 unrouted and 28 violations), using 18.00 CPU seconds and the job allocated 80.68 GB of memory so far.
+2026-09-20 17:02:53.765 INFO   [3EC59B\D2B876] Auto-routing pass #12 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.90 seconds with score 918.30 (6 unrouted and 28 violations), using 18.94 CPU seconds and the job allocated 84.95 GB of memory so far.
+2026-09-20 17:02:55.098 INFO   [3EC59B\D2B876] Auto-routing pass #13 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 1.03 seconds with score 918.30 (6 unrouted and 28 violations), using 19.89 CPU seconds and the job allocated 88.92 GB of memory so far.
+2026-09-20 17:02:56.250 INFO   [3EC59B\D2B876] Auto-routing pass #14 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.94 seconds with score 918.30 (6 unrouted and 28 violations), using 20.86 CPU seconds and the job allocated 93.37 GB of memory so far.
+2026-09-20 17:02:57.447 INFO   [3EC59B\D2B876] Auto-routing pass #15 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.88 seconds with score 918.30 (6 unrouted and 28 violations), using 22.75 CPU seconds and the job allocated 102.16 GB of memory so far.
+2026-09-20 17:02:58.580 INFO   [3EC59B\D2B876] Auto-routing pass #16 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.93 seconds with score 918.30 (6 unrouted and 28 violations), using 23.73 CPU seconds and the job allocated 106.89 GB of memory so far.
+2026-09-20 17:02:59.292 INFO   [3EC59B\D2B876] Auto-routing pass #17 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.56 seconds with score 918.30 (6 unrouted and 28 violations), using 23.73 CPU seconds and the job allocated 106.89 GB of memory so far.
+2026-09-20 17:02:59.979 INFO   [3EC59B\D2B876] Auto-routing pass #18 on board 'da77cbf130e84df13bf935acef2e274b' was completed in 0.55 seconds with score 918.30 (6 unrouted and 28 violations), using 24.75 CPU seconds and the job allocated 113.56 GB of memory so far.
+2026-09-20 17:03:00.001 INFO   [3EC59B\D2B876] The router's score (918.30) has not improved by more than 0.5 points in the last 10 passes (6 items still unconnected). Stopping the auto-router.
+The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):
+  Net '/LOOP_C' (1 unrouted connection):
+    - D4-2  ->  conductionarea
+  Net '+5V' (3 unrouted connections):
+    - C12-1  ->  Q3-2
+    - via  ->  D1-5
+    - J1-A4B9  ->  J1-B4A9
+  Net '/LOOP_FB' (1 unrouted connection):
+    - R18-2  ->  Q2-1
+  Net '/USB_P' (1 unrouted connection):
+    - J1-A6  ->  J1-B6
+2026-09-20 17:03:00.257 INFO   [3EC59B\D2B876] Auto-routing stage completed: started with 45 unrouted nets, completed in 26.93 seconds, final score: 918.30 (6 unrouted and 28 violations), using 24.75 total CPU seconds, 113.56 GB total allocated, and 521.7 MB peak heap usage.
+2026-09-20 17:03:00.383 INFO   [3EC59B\D2B876] Optimization stage started on board 'da77cbf130e84df13bf935acef2e274b' with score 918.30 (6 unrouted and 28 violations).
+2026-09-20 17:03:13.117 INFO   [3EC59B\D2B876] Optimizer pass #1 on board '6d9ae88096dc3ca5f99afd53a965c8fb' was completed in 12.33 seconds with the score of 918.30 (6 unrouted and 28 violations).
+2026-09-20 17:03:13.246 INFO   [3EC59B\D2B876] Stopping optimizer because the improvement in this pass (0.0000%) is below the threshold (1.00%).
+2026-09-20 17:03:13.373 INFO   [3EC59B\D2B876] Optimization stage completed: started with score 918.30 (6 unrouted and 28 violations), completed in 12.86 seconds, final score: 918.30 (6 unrouted and 28 violations), using 12.61 total CPU seconds, 94.06 GB total allocated, and 389.7 MB peak heap usage.
+2026-09-20 17:03:13.382 INFO   [3EC59B\D2B876] Job '3EC59B\D2B876' finished with state: COMPLETED (elapsed: 40.22 seconds, finished at UTC: 2026-09-20T21:03:13.381279400Z).
+2026-09-20 17:03:13.706 INFO   Saving output file 'C:\Users\diode\Documents\KiCad\10.0\projects\esp32-4to20ma-board\routing\work\esp32-4to20ma-board.ses' (SES)...
+2026-09-20 17:03:13.707 INFO   Successfully saved output file 'C:\Users\diode\Documents\KiCad\10.0\projects\esp32-4to20ma-board\routing\work\esp32-4to20ma-board.ses' (47734 bytes).
+

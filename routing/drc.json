@@ -1,0 +1,245 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-09-20T17:03:16",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "esp32-4to20ma-board.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2000 mm; actual 0.1812 mm)",
+            "items": [
+                {
+                    "description": "Pad A1B12 [GND] of J1 on top_cu",
+                    "pos": {
+                        "x": 108.3,
+                        "y": 103.59
+                    },
+                    "uuid": "9124736f-3ad4-4814-9de5-96ccce6a7508"
+                },
+                {
+                    "description": "NPTH pad of J1",
+                    "pos": {
+                        "x": 108.61,
+                        "y": 104.67
+                    },
+                    "uuid": "7e6cab16-9d6b-49ec-8bd3-11dd433fc718"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Hole clearance violation (board setup constraints hole clearance 0.2000 mm; actual 0.1812 mm)",
+            "items": [
+                {
+                    "description": "Pad B1A12 [GND] of J1 on top_cu",
+                    "pos": {
+                        "x": 114.7,
+                        "y": 103.59
+                    },
+                    "uuid": "f75cf87b-d7ed-4b4a-81a2-6a259fd24adb"
+                },
+                {
+                    "description": "NPTH pad of J1",
+                    "pos": {
+                        "x": 114.39,
+                        "y": 104.67
+                    },
+                    "uuid": "12175112-1b5c-4c63-8e9a-faaeba8e0e70"
+                }
+            ],
+            "severity": "error",
+            "type": "hole_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge (board setup constraints silk clearance 0.1500 mm; actual 0.1400 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 139.0,
+                        "y": 111.0
+                    },
+                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                },
+                {
+                    "description": "Circle of J2 on F.Silkscreen",
+                    "pos": {
+                        "x": 118.07,
+                        "y": 110.83
+                    },
+                    "uuid": "acdb8ff4-c11c-4a1d-bf79-63632729eec5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge (board setup constraints silk clearance 0.1500 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 139.0,
+                        "y": 111.0
+                    },
+                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                },
+                {
+                    "description": "Segment of J1 on F.Silkscreen",
+                    "pos": {
+                        "x": 107.0,
+                        "y": 110.94
+                    },
+                    "uuid": "6860659f-dfa8-4b4a-9fa8-3498cda663bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge (board setup constraints silk clearance 0.1500 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 139.0,
+                        "y": 111.0
+                    },
+                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                },
+                {
+                    "description": "Segment of J1 on F.Silkscreen",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 110.94
+                    },
+                    "uuid": "6c1fb3cd-d80a-4513-9271-879d947ed009"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge (board setup constraints silk clearance 0.1500 mm; actual 0.0750 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 139.0,
+                        "y": 111.0
+                    },
+                    "uuid": "7f183f30-3384-4ff5-9240-ae5bc1549137"
+                },
+                {
+                    "description": "Segment of J1 on F.Silkscreen",
+                    "pos": {
+                        "x": 116.07,
+                        "y": 110.8
+                    },
+                    "uuid": "0fa37bd7-9add-4ea4-b497-5f290f296da9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of J1 on F.Silkscreen",
+                    "pos": {
+                        "x": 107.05,
+                        "y": 103.32
+                    },
+                    "uuid": "f28912b4-457c-487a-b680-0a2adf3c32bb"
+                },
+                {
+                    "description": "PTH pad 13 [GND] of J1",
+                    "pos": {
+                        "x": 107.18,
+                        "y": 104.14
+                    },
+                    "uuid": "df2c50e5-c2bb-4f76-aaae-27df20825786"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of SW2 on F.Silkscreen",
+                    "pos": {
+                        "x": 125.0,
+                        "y": 70.65
+                    },
+                    "uuid": "9bf1f8ae-ab0e-47dd-b563-e05b5c7e5dfa"
+                },
+                {
+                    "description": "Pad 1 [/IO0] of SW2 on top_cu",
+                    "pos": {
+                        "x": 124.95,
+                        "y": 71.4
+                    },
+                    "uuid": "cb4f3e99-e9dc-4860-a2af-e2fc5e87905f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of SW1 on F.Silkscreen",
+                    "pos": {
+                        "x": 106.0,
+                        "y": 70.65
+                    },
+                    "uuid": "23848334-da7c-4cd3-b1e5-01696a844e55"
+                },
+                {
+                    "description": "Pad 1 [/EN] of SW1 on top_cu",
+                    "pos": {
+                        "x": 105.95,
+                        "y": 71.4
+                    },
+                    "uuid": "c1c3dd01-9fce-4b68-b58f-1aac94cea29c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        }
+    ]
+}

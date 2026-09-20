@@ -1,0 +1,2135 @@
+(session "esp32-4to20ma-board"
+  (base_design "esp32-4to20ma-board")
+  (placement
+    (resolution um 10)
+    (component "Package_TO_SOT_SMD:SOT-23"
+      (place Q4 1176000 -786000 front 180)
+      (place Q2 1357000 -850000 front 180)
+      (place Q3 1188500 -829000 front 0)
+    )
+    (component "esp32_4to20ma_lib:CONN-TH_KF250NH-5.0-3P"
+      (place J2 1255000 -1050000 front 0)
+    )
+    (component "esp32_4to20ma_lib:SW-SMD_4P-L6.0-W6.0-P4.50-LS9.0_H5.0"
+      (place SW2 1295000 -736500 front 0)
+      (place SW1 1105000 -736500 front 0)
+    )
+    (component "TestPoint:TestPoint_Pad_D1.0mm"
+      (place TP3 1232000 -904000 front 0)
+      (place TP1 1370000 -1016000 front 0)
+      (place TP2 1255500 -988000 front 0)
+      (place TP5 1212000 -760000 front 0)
+      (place TP4 1115000 -850000 front 0)
+    )
+    (component "esp32_4to20ma_lib:SMA_L4.3-W2.6-LS5.2-RD"
+      (place D5 1210000 -988000 front 180)
+      (place D3 1301000 -988000 front 180)
+      (place D2 1260000 -881500 front 90)
+    )
+    (component "Resistor_SMD:R_0402_1005Metric"
+      (place R22 1158500 -809500 front 180)
+      (place R13 1264000 -931000 front 180)
+      (place R10 1303000 -852000 front 180)
+      (place R20 1264000 -958000 front 180)
+      (place R14 1264000 -944000 front 180)
+      (place R1 1095000 -543000 front 0)
+      (place R6 1200000 -710000 front 0)
+      (place R15 1200000 -735000 front 0)
+      (place R5 1095000 -649000 front 0)
+      (place R11 1303000 -840000 front 0)
+      (place R21 1158500 -821000 front 0)
+      (place R16 1386000 -834000 front 270)
+      (place R18 1386000 -859500 front 270)
+      (place R7 1098000 -1010000 front 90)
+      (place R9 1038000 -955000 front 90)
+      (place R8 1132000 -1010000 front 90)
+      (place R17 1330000 -872000 front 90)
+    )
+    (component "Fiducial:Fiducial_1mm_Mask2mm"
+      (place FID3 1360000 -1040000 front 0)
+      (place FID1 1040000 -570000 front 0)
+      (place FID2 1360000 -570000 front 0)
+    )
+    (component "Capacitor_SMD:C_0402_1005Metric"
+      (place C3 1095000 -523000 front 0)
+      (place C12 1158500 -832500 front 0)
+      (place C1 1095000 -563000 front 0)
+      (place C8 1231000 -967000 front 0)
+      (place C9 1244000 -934000 front 270)
+      (place C6 1045000 -820000 front 90)
+    )
+    (component "Capacitor_SMD:C_0603_1608Metric"
+      (place C7 1115000 -820000 front 90)
+    )
+    (component 
+      (place H2 1365000 -668000 front 0)
+      (place H1 1035000 -668000 front 0)
+      (place H4 1365000 -1075000 front 0)
+      (place H3 1035000 -1075000 front 0)
+    )
+    (component "esp32_4to20ma_lib:MSOP-10_L3.0-W3.0-P0.50-LS5.0-BL"
+      (place U3 1205000 -945000 front 270)
+    )
+    (component "Capacitor_SMD:C_1210_3225Metric"
+      (place C11 1294000 -881500 front 90)
+      (place C10 1312000 -805000 front 270)
+    )
+    (component "Package_TO_SOT_SMD:SOT-223"
+      (place Q1 1358000 -928000 front 90)
+    )
+    (component "Diode_SMD:D_SOD-123"
+      (place D4 1369000 -990000 front 180)
+    )
+    (component "Resistor_SMD:R_0805_2012Metric"
+      (place R12 1300000 -937500 front 270)
+    )
+    (component "esp32_4to20ma_lib:SOT-25-5_L2.9-W1.6-P0.95-LS2.8-BL"
+      (place U4 1080000 -820000 front 0)
+    )
+    (component "esp32_4to20ma_lib:SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL"
+      (place D1 1115000 -975000 front 180)
+      (place U5 1280000 -820000 front 0)
+    )
+    (component "LED_SMD:LED_0805_2012Metric"
+      (place LED1 1038000 -1020000 front 90)
+    )
+    (component "esp32_4to20ma_lib:WIFIM-SMD_ESP32-S3-WROOM-1U"
+      (place U1 1220000 -599500 front 0)
+    )
+    (component "esp32_4to20ma_lib:IND-SMD_L4.0-W4.0_FNR40XXS"
+      (place L1 1237000 -824000 front 0)
+    )
+    (component "esp32_4to20ma_lib:USB-C-SMD_TYPE-C-16PIN-2MD-073"
+      (place J1 1115000 -1059700 front 0)
+    )
+    (component "Capacitor_SMD:C_0805_2012Metric"
+      (place C2 1093000 -588000 front 0)
+    )
+  )
+  (was_is
+  )
+  (routes 
+    (resolution um 10)
+    (parser
+      (host_cad "KiCad's Pcbnew")
+      (host_version "10.0.6")
+    )
+    (library_out 
+      (padstack "Via[0-1]_600:300_um"
+        (shape
+          (circle "top_cu" 6000 0 0)
+        )
+        (shape
+          (circle "bottom_cu" 6000 0 0)
+        )
+        (attach off)
+      )
+      (padstack "Via[0-1]_800:400_um"
+        (shape
+          (circle "top_cu" 8000 0 0)
+        )
+        (shape
+          (circle "bottom_cu" 8000 0 0)
+        )
+        (attach off)
+      )
+    )
+    (network_out 
+      (net GND
+        (via "Via[0-1]_600:300_um" 1280000 -845000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1170000 -880000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1115000 -952000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1109000 -563000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1240000 -735000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1020000 -750000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1102500 -603000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1060000 -900000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1198500 -776500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1080000 -840500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1115000 -803000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1020000 -900000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1242000 -955000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1020000 -600000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1380000 -600000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1323000 -862000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1120000 -910000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1304000 -959500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1110000 -737000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1195000 -1004500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1345000 -790000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1045000 -806000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1165000 -910000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1132000 -996000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1331000 -819700
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1286000 -1004500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1296000 -959500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1340000 -1065000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1210000 -865000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1272000 -1004500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1052000 -1029400
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1280000 -854500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1109000 -523000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1380000 -750000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1098000 -996000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1181000 -1004500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1171000 -937500
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1200000 -1085000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1293000 -820000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1270000 -765000
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1308100 -840000
+            1308100 -823000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1280000 -831500
+            1280000 -845000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1280000 -820000
+            1280000 -831500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1080000 -833000
+            1080000 -840500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1304000 -950000
+            1304000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1185370 -776500
+            1198500 -776500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1115000 -963500
+            1115000 -952000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1280000 -856000
+            1285000 -863000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1132000 -1004900
+            1132000 -996000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1181000 -996000
+            1181000 -1004500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1102500 -588000
+            1102500 -603000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1269100 -944000
+            1296000 -944000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 8000
+            1188000 -1014000
+            1205000 -1031000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1280000 -845000
+            1280000 -854500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1235800 -967000
+            1242000 -960800
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1237000 -950000
+            1242000 -955000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1300000 -820000
+            1293000 -820000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1195000 -996000
+            1195000 -1004500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1099800 -523000
+            1109000 -523000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1178000 -937500
+            1171000 -937500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1272000 -996000
+            1272000 -1004500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1038000 -1029380
+            1052000 -1029400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1232000 -950000
+            1237000 -950000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 8000
+            1205000 -1031000
+            1205000 -1050000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1242000 -960800
+            1242000 -955000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1293000 -820000
+            1280000 -820000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1323000 -819700
+            1331000 -819700
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1098000 -1004900
+            1098000 -996000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1296000 -950000
+            1296000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1099800 -563000
+            1109000 -563000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1330000 -866900
+            1323000 -862000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1045000 -815200
+            1045000 -806000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1183900 -935000
+            1183900 -940000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1285000 -863000
+            1289000 -865000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1280000 -854500
+            1280000 -856000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 8000
+            1188000 -996000
+            1188000 -1014000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1115000 -812250
+            1115000 -803000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1286000 -996000
+            1286000 -1004500
+          )
+          (type protect)
+        )
+      )
+      (net "/LOOP_C"
+        (via "Via[0-1]_600:300_um" 1358000 -934000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1346000 -918000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1346000 -934000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1370000 -934000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1370000 -918000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1358000 -918000
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 15000
+            1358000 -934000
+            1358000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 15000
+            1358000 -896500
+            1358000 -918000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1358000 -976000
+            1354500 -979500
+            1354500 -986000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 15000
+            1358000 -918000
+            1358000 -934000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1358000 -959500
+            1358000 -976000
+          )
+          (type protect)
+        )
+      )
+      (net "/MT_EN"
+        (wire
+          (path "top_cu" 2000
+            1188300 -689000
+            1188300 -699017
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1188300 -699017
+            1202854 -699017
+            1210831 -706994
+            1210831 -729269
+            1205100 -735000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1205100 -735000
+            1205100 -753100
+            1212000 -760000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1212000 -760000
+            1212000 -771150
+            1187650 -795500
+            1185375 -795500
+          )
+        )
+      )
+      (net "/SW_PD"
+        (wire
+          (path "top_cu" 2000
+            1153400 -809500
+            1153400 -799225
+            1166625 -786000
+          )
+        )
+      )
+      (net "/LOOP_RTN"
+        (wire
+          (path "top_cu" 3000
+            1296000 -931000
+            1297375 -931000
+            1300000 -928375
+          )
+        )
+        (wire
+          (path "top_cu" 3000
+            1303000 -928400
+            1300025 -928400
+            1300000 -928375
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1255500 -988000
+            1255500 -973500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1255500 -988000
+            1232000 -988000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1309500 -928400
+            1303000 -928400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1255000 -1050000
+            1255000 -992000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1255000 -992000
+            1255500 -988000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1259500 -969500
+            1309000 -969500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1313000 -932000
+            1309500 -928400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1255500 -973500
+            1259500 -969500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1309000 -969500
+            1313000 -965500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1313000 -965500
+            1313000 -932000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1269100 -931000
+            1296000 -931000
+          )
+          (type protect)
+        )
+      )
+      (net "/LOOP_V"
+        (wire
+          (path "top_cu" 3000
+            1279603 -956870
+            1270230 -956870
+            1269100 -958000
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1279603 -956870
+        )
+        (wire
+          (path "bottom_cu" 3000
+            1305000 -1050000
+            1305000 -982267
+            1279603 -956870
+          )
+        )
+        (wire
+          (path "top_cu" 3000
+            1323000 -1000000
+            1323000 -1004000
+          )
+        )
+        (wire
+          (path "top_cu" 5000
+            1385500 -1000000
+            1381500 -1004000
+            1370000 -1004000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1323000 -1000000
+            1323000 -988000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1370000 -1004000
+            1370000 -1016000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1370000 -1004000
+            1327000 -1004000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1385500 -990000
+            1385500 -1000000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1305000 -1022000
+            1305000 -1050000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1327000 -1004000
+            1323000 -1000000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1323000 -1004000
+            1305000 -1022000
+          )
+          (type protect)
+        )
+      )
+      (net "/IO0"
+        (wire
+          (path "top_cu" 2000
+            1249500 -714000
+            1263517 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1249500 -759000
+            1263517 -759000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1263517 -759000
+            1263517 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1309000 -675100
+            1298983 -675100
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1249500 -714000
+            1263517 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1271793 -717569
+            1267086 -717569
+            1263517 -714000
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1271793 -717569
+        )
+        (wire
+          (path "bottom_cu" 2000
+            1300508 -717569
+            1271793 -717569
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1300508 -717569
+        )
+        (wire
+          (path "top_cu" 2000
+            1298983 -675100
+            1298983 -716044
+            1300508 -717569
+          )
+        )
+      )
+      (net +24V
+        (wire
+          (path "top_cu" 4000
+            1306000 -896200
+            1294050 -896200
+            1294000 -896250
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1366375 -840500
+            1366370 -840500
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1294000 -896250
+            1294000 -897500
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1260000 -903500
+            1260000 -897500
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1306000 -896200
+            1315000 -896200
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1308100 -852000
+            1315000 -852000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1366370 -840500
+            1366400 -834500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1315000 -844000
+            1318500 -840500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1260000 -903500
+            1232000 -904000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1366400 -834500
+            1372000 -828900
+            1386000 -828900
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1315000 -852000
+            1315000 -844000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 8000
+            1260000 -897500
+            1294000 -897500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1315000 -896200
+            1315000 -852000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1318500 -840500
+            1366370 -840500
+          )
+          (type protect)
+        )
+      )
+      (net "/SW_GATE"
+        (wire
+          (path "top_cu" 2000
+            1163600 -821000
+            1163600 -809500
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1163300 -832500
+            1163300 -821300
+            1163600 -821000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1179125 -819500
+            1173600 -819500
+            1163600 -809500
+          )
+        )
+      )
+      (net +3V3
+        (wire
+          (path "bottom_cu" 4000
+            1164880 -775855
+            1188391 -752344
+          )
+        )
+        (wire
+          (path "bottom_cu" 4000
+            1099503 -775855
+            1164880 -775855
+          )
+        )
+        (wire
+          (path "bottom_cu" 4000
+            1164880 -775855
+            1164880 -798801
+            1206938 -840859
+          )
+        )
+        (wire
+          (path "top_cu" 2798
+            1226100 -955000
+            1214584 -955000
+          )
+        )
+        (wire
+          (path "top_cu" 2798
+            1205503 -955402
+            1214182 -955402
+            1214584 -955000
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1206938 -840859
+            1202931 -844866
+            1202931 -952830
+            1205503 -955402
+          )
+        )
+        (via "Via[0-1]_800:400_um" 1206938 -840859
+        )
+        (wire
+          (path "top_cu" 4000
+            1070500 -807000
+            1070500 -797458
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1038000 -960100
+            1038998 -960100
+            1045739 -953359
+            1045739 -864040
+            1037815 -856116
+            1037815 -803199
+            1043556 -797458
+            1070500 -797458
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1099503 -775855
+            1103000 -779352
+            1103000 -794000
+          )
+        )
+        (via "Via[0-1]_800:400_um" 1099503 -775855
+        )
+        (via "Via[0-1]_800:400_um" 1188391 -752344
+        )
+        (wire
+          (path "top_cu" 4000
+            1194900 -735000
+            1194900 -745835
+            1188391 -752344
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1131000 -522700
+            1119483 -522700
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1119483 -522700
+            1112076 -530107
+            1105920 -530107
+            1103077 -532950
+            1098461 -532950
+            1090200 -524689
+            1090200 -523000
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1194900 -710000
+            1192061 -712839
+            1192061 -732161
+            1194900 -735000
+          )
+        )
+        (wire
+          (path "top_cu" 5000
+            1070500 -794000
+            1103000 -794000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1080000 -548000
+            1085000 -543000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1080000 -649000
+            1089900 -649000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1080000 -649000
+            1080000 -595000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1080000 -581000
+            1080000 -548000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1080000 -530000
+            1087000 -523000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1087000 -523000
+            1090200 -523000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1115000 -827750
+            1115000 -850000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1080000 -595000
+            1083500 -588000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1080000 -548000
+            1080000 -530000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1070500 -794000
+            1080000 -784500
+            1080000 -649000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1083500 -588000
+            1080000 -581000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1085000 -543000
+            1089900 -543000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1070500 -807000
+            1070500 -794000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1103000 -794000
+            1103000 -827800
+            1115000 -827750
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1226200 -967000
+            1226100 -955000
+          )
+          (type protect)
+        )
+      )
+      (net "/EN"
+        (wire
+          (path "top_cu" 2000
+            1100100 -543000
+            1100121 -543000
+            1107721 -535400
+            1131000 -535400
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1072080 -714000
+            1073517 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1059500 -714000
+            1072080 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1066340 -600997
+            1066340 -708260
+            1072080 -714000
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1066340 -600997
+        )
+        (wire
+          (path "bottom_cu" 2000
+            1091948 -608508
+            1084437 -600997
+            1066340 -600997
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1091948 -608508
+        )
+        (wire
+          (path "top_cu" 2000
+            1090200 -563000
+            1091948 -564748
+            1091948 -608508
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1059500 -759000
+            1073517 -759000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1073517 -759000
+            1073517 -714000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1090200 -563000
+            1090200 -552900
+            1100100 -543000
+          )
+        )
+      )
+      (net "/LOOP_SNS"
+        (wire
+          (path "top_cu" 4000
+            1390000 -854400
+            1394000 -858400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1386000 -959500
+            1381000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1394000 -858400
+            1394000 -951500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1386000 -854400
+            1390000 -854400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1394000 -951500
+            1386000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1386000 -839100
+            1386000 -854400
+          )
+          (type protect)
+        )
+      )
+      (net "/INA_INP"
+        (wire
+          (path "top_cu" 2000
+            1249000 -931000
+            1247200 -929200
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1247200 -929200
+            1244000 -929200
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1232000 -935000
+            1226100 -935000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1258900 -931000
+            1249000 -931000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1234100 -933600
+            1232000 -935000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1244000 -929200
+            1238500 -929200
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1238500 -929200
+            1234100 -933600
+          )
+          (type protect)
+        )
+      )
+      (net "/I2C_SCL"
+        (wire
+          (path "top_cu" 2000
+            1175600 -689000
+            1175600 -699017
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1183900 -955000
+            1173283 -955000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1173283 -955000
+            1165423 -947140
+            1165423 -934299
+            1189609 -910113
+            1189609 -834609
+            1187475 -832475
+            1187475 -824525
+            1189149 -822851
+            1189149 -816166
+            1175068 -802085
+            1175068 -791481
+            1176837 -789712
+            1176837 -781836
+            1174777 -779776
+            1174777 -699840
+            1175600 -699017
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1199078 -720397
+            1205100 -714375
+            1205100 -710000
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1199078 -720397
+        )
+        (wire
+          (path "bottom_cu" 2000
+            1185648 -659283
+            1199078 -672713
+            1199078 -720397
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1185648 -659283
+        )
+        (wire
+          (path "top_cu" 2000
+            1175600 -689000
+            1175600 -669331
+            1185648 -659283
+          )
+        )
+      )
+      (net +5V
+        (wire
+          (path "top_cu" 4000
+            1179125 -838500
+            1179120 -838500
+          )
+        )
+        (via "Via[0-1]_800:400_um" 1091000 -975000
+          (type protect)
+        )
+        (via "Via[0-1]_800:400_um" 1139000 -975000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1115000 -975000
+          (type protect)
+        )
+        (wire
+          (path "bottom_cu" 5000
+            1091000 -975000
+            1139000 -975000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1146000 -963000
+            1146000 -850000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1174600 -843000
+            1179120 -838500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1091000 -990000
+            1091000 -975000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1139000 -990000
+            1139000 -970000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1091000 -975000
+            1091000 -850500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1091000 -1035900
+            1091000 -990000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1045000 -849000
+            1045000 -824800
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1091000 -850500
+            1089500 -849000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1153700 -843000
+            1153700 -832500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1139000 -970000
+            1146000 -963000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1153000 -843000
+            1174600 -843000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1089500 -849000
+            1070500 -849000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1139000 -1035900
+            1139000 -990000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1146000 -850000
+            1153000 -843000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4000
+            1070500 -849000
+            1045000 -849000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1070500 -849000
+            1070500 -833000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 5000
+            1089500 -849000
+            1089500 -833000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1153700 -832500
+            1153400 -821000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 3000
+            1115000 -986500
+            1115000 -975000
+          )
+          (type protect)
+        )
+      )
+      (net "/I2C_SDA"
+        (wire
+          (path "top_cu" 2000
+            1195682 -841298
+            1195682 -948835
+            1194517 -950000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1183900 -950000
+            1194517 -950000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1115695 -649700
+            1100800 -649700
+            1100100 -649000
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1131000 -649700
+            1115695 -649700
+          )
+        )
+        (wire
+          (path "top_cu" 2000
+            1115695 -649700
+            1115695 -780656
+            1119805 -784766
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1195682 -841298
+        )
+        (wire
+          (path "bottom_cu" 2000
+            1119805 -784766
+            1176337 -841298
+            1195682 -841298
+          )
+        )
+        (via "Via[0-1]_600:300_um" 1119805 -784766
+        )
+      )
+      (net "/INA_VBUS"
+        (wire
+          (path "top_cu" 2000
+            1226100 -945000
+            1245900 -945000
+            1258900 -958000
+          )
+        )
+      )
+      (net "/INA_INN"
+        (wire
+          (path "top_cu" 2000
+            1250000 -944000
+            1246000 -940000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1239000 -938800
+            1237800 -940000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1246000 -940000
+            1244000 -938800
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1258900 -944000
+            1250000 -944000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1237800 -940000
+            1226100 -940000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1244000 -938800
+            1239000 -938800
+          )
+          (type protect)
+        )
+      )
+      (net "/LOOP_DRV"
+        (wire
+          (path "top_cu" 2000
+            1347620 -850000
+            1347625 -850000
+          )
+        )
+        (wire
+          (path "top_cu" 2500
+            1347620 -850000
+            1343000 -850000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1335000 -951000
+            1335000 -959500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1338500 -873000
+            1334400 -877100
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1330000 -877100
+            1330000 -946000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1338500 -854500
+            1338500 -873000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1330000 -946000
+            1335000 -951000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1343000 -850000
+            1338500 -854500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1334400 -877100
+            1330000 -877100
+          )
+          (type protect)
+        )
+      )
+      (net "/MT_FB"
+        (wire
+          (path "top_cu" 2000
+            1291000 -840000
+            1297900 -840000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1289500 -831500
+            1289500 -838500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1289500 -838500
+            1291000 -840000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1297900 -840000
+            1297900 -852000
+          )
+          (type protect)
+        )
+      )
+      (net "/CC1"
+        (wire
+          (path "top_cu" 2000
+            1102500 -1029000
+            1098000 -1024500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1098000 -1024500
+            1098000 -1015100
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1102500 -1035900
+            1102500 -1029000
+          )
+          (type protect)
+        )
+      )
+      (net "/VIN_SW"
+        (wire
+          (path "top_cu" 4000
+            1197875 -829000
+            1197870 -829000
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1222000 -824000
+            1219000 -824000
+            1214000 -829000
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1300000 -795000
+            1307250 -795000
+            1312000 -790250
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1222000 -808000
+            1222000 -824000
+          )
+        )
+        (wire
+          (path "top_cu" 6000
+            1280000 -795000
+            1289500 -795000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1289500 -795000
+            1300000 -795000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1222000 -795000
+            1280000 -795000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4500
+            1280000 -795000
+            1280000 -808500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1222000 -808000
+            1222000 -795000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 6000
+            1197870 -829000
+            1214000 -829000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 4500
+            1289500 -795000
+            1289500 -808500
+          )
+          (type protect)
+        )
+      )
+      (net "/LOOP_FB"
+        (wire
+          (path "top_cu" 2500
+            1372000 -860600
+            1366370 -859500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1386000 -864600
+            1376000 -864600
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1376000 -864600
+            1372000 -860600
+          )
+          (type protect)
+        )
+      )
+      (net "/USB_P"
+        (wire
+          (path "top_cu" 2500
+            1131000 -675100
+            1132250 -675100
+          )
+        )
+        (wire
+          (path "top_cu" 2500
+            1132250 -945250
+            1132250 -675100
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1122500 -1035900
+            1122500 -1029500
+            1124500 -1027500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1114500 -1016000
+            1124500 -1016000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1124500 -953000
+            1132250 -945250
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1124500 -1027500
+            1124500 -986500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1124500 -986500
+            1124500 -963500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1124500 -963500
+            1124500 -953000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1112500 -1035900
+            1112500 -1018000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1112500 -1018000
+            1114500 -1016000
+          )
+          (type protect)
+        )
+      )
+      (net "/USB_N"
+        (via "Via[0-1]_600:300_um" 1118000 -1023000
+          (type protect)
+        )
+        (via "Via[0-1]_600:300_um" 1105500 -999500
+          (type protect)
+        )
+        (wire
+          (path "bottom_cu" 2000
+            1118000 -1023000
+            1105500 -1010500
+            1105500 -999500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1105500 -1019000
+            1105500 -999500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1107500 -1035900
+            1107500 -1021000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1105500 -963500
+            1105500 -947000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1117500 -1035900
+            1117500 -1028000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1127750 -924750
+            1127750 -690000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1105500 -986500
+            1105500 -963500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1117500 -1028000
+            1118000 -1023000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1127750 -690000
+            1119500 -681750
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1107500 -1021000
+            1105500 -1019000
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1119500 -666400
+            1123500 -662400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1123500 -662400
+            1131000 -662400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1119500 -681750
+            1119500 -666400
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2500
+            1105500 -947000
+            1127750 -924750
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 2000
+            1105500 -999500
+            1105500 -986500
+          )
+          (type protect)
+        )
+      )
+      (net "/LED_A"
+        (wire
+          (path "top_cu" 2000
+            1038000 -1010625
+            1031379 -1004004
+            1031379 -956521
+            1038000 -949900
+          )
+        )
+      )
+      (net "/MT_SW"
+        (wire
+          (path "top_cu" 4000
+            1255000 -831500
+            1255000 -838000
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1252000 -824000
+            1255000 -827000
+            1255000 -831500
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1255000 -831500
+            1256000 -831500
+          )
+        )
+        (wire
+          (path "top_cu" 4000
+            1260000 -859500
+            1255000 -854500
+            1255000 -854000
+          )
+        )
+        (wire
+          (path "top_cu" 5000
+            1256000 -831500
+            1270500 -831500
+          )
+          (type protect)
+        )
+        (wire
+          (path "top_cu" 10000
+            1255000 -838000
+            1255000 -854000
+          )
+          (type protect)
+        )
+      )
+      (net "/CC2"
+        (wire
+          (path "top_cu" 2000
+            1132500 -1035900
+            1132500 -1022000
+            1132000 -1015100
+          )
+          (type protect)
+        )
+      )
+    )
+  )
+)

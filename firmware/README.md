@@ -19,10 +19,20 @@ secrets.yaml.example               Copy to secrets.yaml and fill in.
 ```
 
 The split exists so a logic fix reaches every unit at once. The device file
-pulls the package in with `!include` today; swap that for a `github://` line
-once the package is published, and **pin a tag rather than `@main`** on
-anything you care about — otherwise an upstream edit rewrites the firmware of a
-running instrument.
+pulls the package straight from GitHub:
+
+```yaml
+packages:
+  loop_board: github://Diode663/ESP32_4-20mA_Sensor/firmware/package/esp32-4to20ma-board.yaml@main
+```
+
+**Pin a tag rather than `@main`** on any instrument you care about — otherwise
+an upstream edit rewrites its firmware the next time you flash it.
+
+When you are working on the package *itself*, switch that line to the
+commented `!include` next to it. With `github://` you compile whatever was last
+**pushed**, not what is on your disk, which is a confusing half hour if you
+forget.
 
 ## Getting started
 
