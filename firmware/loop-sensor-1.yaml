@@ -1,0 +1,80 @@
+# =============================================================================
+# One board. Everything that is the same on every board lives in the package.
+# =============================================================================
+#
+# Copy this file per unit, change the name and the scaling, flash it.
+# Nothing here knows anything about the hardware -- that is the package's job.
+
+substitutions:
+  device_name: "loop-sensor-1"
+  friendly_name: "Loop Sensor 1"
+
+  # --- What this board's transmitter measures -------------------------------
+  # Engineering units at 4 mA and at 20 mA. The defaults below just report the
+  # loop as a percentage, which is the right answer until you know better.
+  pv_name: "Process value"
+  pv_unit: "%"
+  pv_min: "0.0"
+  pv_max: "100.0"
+  pv_decimals: "2"
+
+  # Set to "true" only for a differential-pressure transmitter whose output is
+  # proportional to flow squared.
+  pv_sqrt: "false"
+
+  # --- Examples, for when you know what is on the end of the wire -----------
+  #
+  #   A 0-10 bar pressure transmitter:
+  #     pv_name: "Line pressure"
+  #     pv_unit: "bar"
+  #     pv_min: "0.0"
+  #     pv_max: "10.0"
+  #
+  #   A -40 to +120 C temperature transmitter:
+  #     pv_name: "Tank temperature"
+  #     pv_unit: "°C"
+  #     pv_min: "-40.0"
+  #     pv_max: "120.0"
+  #
+  #   A DP cell reading 0-250 m3/h of flow at full scale:
+  #     pv_name: "Feed flow"
+  #     pv_unit: "m³/h"
+  #     pv_min: "0.0"
+  #     pv_max: "250.0"
+  #     pv_sqrt: "true"
+  #
+  # Home Assistant gives you long-term statistics for free if the unit is one
+  # it recognises. Add `pv_device_class` support to the package if you want the
+  # matching icon as well -- it is deliberately left out for now, because a
+  # wrong device_class is worse than none.
+
+packages:
+  # Local copy -- works today, straight out of the repository.
+  loop_board: !include package/esp32-4to20ma-board.yaml
+
+  # Once the package is published, swap the line above for this one and every
+  # board tracks the same definition:
+  #
+  # loop_board: github://Diode663/<repo>/firmware/package/esp32-4to20ma-board.yaml@main
+  #
+  # Pin `@v1.0.0` rather than `@main` on anything you care about, so a change
+  # upstream cannot rewrite the firmware of a running instrument.
+
+# -----------------------------------------------------------------------------
+# Site-specific overrides go here. A few worth knowing about:
+#
+#   wifi:
+#     manual_ip:
+#       static_ip: 192.168.1.50
+#       gateway: 192.168.1.1
+#       subnet: 255.255.255.0
+#
+#   # Keep measuring when Home Assistant is down, instead of rebooting after
+#   # 15 minutes of no client:
+#   api:
+#     reboot_timeout: 0s
+#
+#   # Faster response at the cost of noise (the default is 5 x 1 s):
+#   substitutions:
+#     median_window: "3"
+# -----------------------------------------------------------------------------

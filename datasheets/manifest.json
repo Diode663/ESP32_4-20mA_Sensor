@@ -1,0 +1,345 @@
+{
+  "schematic": "esp32-4to20ma-board.kicad_sch",
+  "last_sync": "2026-09-20T16:25:55.707168+00:00",
+  "parts": {
+    "CS3225X7R106K500NRL": {
+      "manufacturer": "Samsung/CCTC",
+      "description": "",
+      "value": "10uF/50V",
+      "references": [
+        "C11",
+        "C10"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:15.297038+00:00"
+    },
+    "CL21A226MAQNNNE": {
+      "manufacturer": "CCTC",
+      "description": "",
+      "value": "22uF",
+      "references": [
+        "C2"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:16.734896+00:00"
+    },
+    "CL05B104KO5NNNC": {
+      "manufacturer": "CCTC",
+      "description": "",
+      "value": "100nF",
+      "references": [
+        "C3",
+        "C9",
+        "C8"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:18.100595+00:00"
+    },
+    "CL05A105KA5NQNC": {
+      "manufacturer": "Samwha/CCTC",
+      "description": "",
+      "value": "1uF",
+      "references": [
+        "C6",
+        "C1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:19.218560+00:00"
+    },
+    "CL10A106KP8NNNC": {
+      "manufacturer": "CCTC",
+      "description": "",
+      "value": "10uF",
+      "references": [
+        "C7"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:20.303080+00:00"
+    },
+    "USBLC6-2SC6": {
+      "manufacturer": "Ampec/ST-compatible",
+      "description": "",
+      "value": "USBLC6-2SC6",
+      "references": [
+        "D1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:21.684075+00:00"
+    },
+    "SS34": {
+      "manufacturer": "MDD",
+      "description": "",
+      "value": "SS34",
+      "references": [
+        "D2"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:22.886423+00:00"
+    },
+    "SMAJ36A": {
+      "manufacturer": "Jiangsu Changjing",
+      "description": "",
+      "value": "SMAJ36A",
+      "references": [
+        "D3"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:23.974978+00:00"
+    },
+    "TYPE-C 16PIN 2MD(073)": {
+      "manufacturer": "Korean Hroparts Elec",
+      "description": "",
+      "value": "USB-C Receptacle",
+      "references": [
+        "J1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:25.331943+00:00"
+    },
+    "WJ2EDGVC-5.08-02P-14-00A": {
+      "manufacturer": "Ningbo Kangnex",
+      "description": "",
+      "value": "4-20mA Loop",
+      "references": [
+        "J2"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:26.564184+00:00"
+    },
+    "FNR4030S4R7MT": {
+      "manufacturer": "Sunlord",
+      "description": "",
+      "value": "4.7uH",
+      "references": [
+        "L1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:27.884690+00:00"
+    },
+    "NCD0805R1": {
+      "manufacturer": "Nichia-compatible",
+      "description": "",
+      "value": "Power",
+      "references": [
+        "LED1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:29.339679+00:00"
+    },
+    "MMBT5401": {
+      "manufacturer": "JSCJ",
+      "description": "",
+      "value": "MMBT5401",
+      "references": [
+        "Q2",
+        "Q1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:30.472093+00:00"
+    },
+    "FRC0402F3903TS": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "390k",
+      "references": [
+        "R10"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:31.564401+00:00"
+    },
+    "0402WGF1002TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "10k",
+      "references": [
+        "R11",
+        "R1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:32.912604+00:00"
+    },
+    "FRC0805F3R32TS": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "3.32",
+      "references": [
+        "R12"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:33.982957+00:00"
+    },
+    "0402WGF100JTCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "10",
+      "references": [
+        "R14",
+        "R13"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:35.270755+00:00"
+    },
+    "0402WGF1003TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "100k",
+      "references": [
+        "R15"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:37.302106+00:00"
+    },
+    "0402WGF200JTCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "20",
+      "references": [
+        "R16"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:38.576862+00:00"
+    },
+    "0402WGF4702TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "47k",
+      "references": [
+        "R17"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:39.911890+00:00"
+    },
+    "0402WGF1001TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "1k",
+      "references": [
+        "R18"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:41.290556+00:00"
+    },
+    "0402WGF4302TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "43k",
+      "references": [
+        "R19"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:42.422785+00:00"
+    },
+    "0402WGF4701TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "4.7k",
+      "references": [
+        "R6",
+        "R5"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:43.915932+00:00"
+    },
+    "0402WGF5101TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "5.1k",
+      "references": [
+        "R8",
+        "R7"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:45.340350+00:00"
+    },
+    "0402WGF3300TCE": {
+      "manufacturer": "Uniroyal",
+      "description": "",
+      "value": "330",
+      "references": [
+        "R9"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:46.886127+00:00"
+    },
+    "KH-6X6X5H-STM": {
+      "manufacturer": "Korean Hroparts Elec",
+      "description": "",
+      "value": "BOOT",
+      "references": [
+        "SW2"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:49.201835+00:00"
+    },
+    "ESP32-S3-WROOM-1-N4": {
+      "manufacturer": "Espressif",
+      "description": "",
+      "value": "ESP32-S3-WROOM-1-N4",
+      "references": [
+        "U1"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:50.149151+00:00"
+    },
+    "INA226AIDGSR": {
+      "manufacturer": "Texas Instruments",
+      "description": "",
+      "value": "INA226AIDGSR",
+      "references": [
+        "U3"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:51.545153+00:00"
+    },
+    "AP2112K-3.3TRG1": {
+      "manufacturer": "Diodes Inc",
+      "description": "",
+      "value": "AP2112K-3.3",
+      "references": [
+        "U4"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:52.793610+00:00"
+    },
+    "MT3608": {
+      "manufacturer": "Aerosemi",
+      "description": "",
+      "value": "MT3608",
+      "references": [
+        "U5"
+      ],
+      "status": "failed",
+      "error": "No datasheet URL or all download methods failed",
+      "last_attempt": "2026-09-20T16:25:54.087072+00:00"
+    }
+  }
+}

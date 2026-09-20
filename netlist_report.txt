@@ -1,0 +1,473 @@
+==============================================================================
+ESP32 4-20 mA ESPHome Sensor Board -- connectivity report
+Generated from generate_schematic.py; regenerate with netlist_report.py
+==============================================================================
+
+SECTION 1 -- COMPONENTS
+
+Ref    Schematic block    Value                  LCSC       MPN
+------------------------------------------------------------------------------
+C1     Microcontroller    1uF                    C52923     CL05A105KA5NQNC
+C2     Microcontroller    22uF                   C45783     CL21A226MAQNNNE
+C3     Microcontroller    100nF                  C1525      CL05B104KO5NNNC
+C6     Power Input        1uF                    C52923     CL05A105KA5NQNC
+C7     Power Input        10uF                   C19702     CL10A106KP8NNNC
+C8     4-20 Ma Loop       100nF                  C1525      CL05B104KO5NNNC
+C9     4-20 Ma Loop       100nF                  C1525      CL05B104KO5NNNC
+C10    24 V Loop Supply   10uF/50V               C2918502   CS3225X7R106K500NRL
+C11    24 V Loop Supply   10uF/50V               C2918502   CS3225X7R106K500NRL
+C12    24 V Loop Supply   100nF                  C1525      CL05B104KO5NNNC
+D1     Power Input        USBLC6-2SC6            C2687116   USBLC6-2SC6
+D2     24 V Loop Supply   SS34                   C8678      SS34
+D3     4-20 Ma Loop       SMAJ28A                C353458    SMAJ28A
+D4     4-20 Ma Loop       1N4148W                C81598     1N4148W
+D5     4-20 Ma Loop       SMAJ12A                C113957    SMAJ12A
+J1     Power Input        USB-C Receptacle       C2765186   TYPE-C 16PIN 2MD(073)
+J2     4-20 Ma Loop       4-20mA Loop            C976567    KF250NH-5.0-3P
+L1     24 V Loop Supply   22uH                   C167883    FNR4030S220MT
+LED1   Power Input        Power                  C84256     NCD0805R1
+Q1     4-20 Ma Loop       BCP53-16               C148109    BCP53-16
+Q2     4-20 Ma Loop       MMBT5401               C8326      MMBT5401
+Q3     24 V Loop Supply   AO3401A                C15127     AO3401A
+Q4     24 V Loop Supply   2N7002                 C8545      2N7002
+R1     Microcontroller    10k                    C25744     0402WGF1002TCE
+R5     Microcontroller    4.7k                   C25900     0402WGF4701TCE
+R6     Microcontroller    4.7k                   C25900     0402WGF4701TCE
+R7     Power Input        5.1k                   C25905     0402WGF5101TCE
+R8     Power Input        5.1k                   C25905     0402WGF5101TCE
+R9     Power Input        330                    C25104     0402WGF3300TCE
+R10    24 V Loop Supply   390k                   C2909352   FRC0402F3903TS
+R11    24 V Loop Supply   10k                    C25744     0402WGF1002TCE
+R12    4-20 Ma Loop       3.32                   C3013220   FRC0805F3R32TS
+R13    4-20 Ma Loop       10                     C25077     0402WGF100JTCE
+R14    4-20 Ma Loop       10                     C25077     0402WGF100JTCE
+R15    24 V Loop Supply   100k                   C25741     0402WGF1003TCE
+R16    4-20 Ma Loop       18                     C138043    RC0402FR-0718RL
+R17    4-20 Ma Loop       47k                    C25792     0402WGF4702TCE
+R18    4-20 Ma Loop       1k                     C11702     0402WGF1001TCE
+R20    4-20 Ma Loop       10k                    C25744     0402WGF1002TCE
+R21    24 V Loop Supply   390k                   C2909352   FRC0402F3903TS
+R22    24 V Loop Supply   100k                   C25741     0402WGF1003TCE
+SW1    Microcontroller    RESET                  C2837531   KH-6X6X5H-STM
+SW2    Microcontroller    BOOT                   C2837531   KH-6X6X5H-STM
+TP1    24 V Loop Supply   LOOP_V                 --         (test point, not in BOM)
+TP2    24 V Loop Supply   LOOP_RTN               --         (test point, not in BOM)
+TP3    24 V Loop Supply   +24V                   --         (test point, not in BOM)
+TP4    24 V Loop Supply   +3V3                   --         (test point, not in BOM)
+TP5    24 V Loop Supply   MT_EN                  --         (test point, not in BOM)
+U1     Microcontroller    ESP32-S3-WROOM-1U-N4   C2980296   ESP32-S3-WROOM-1U-N4
+U3     4-20 Ma Loop       INA226AIDGSR           C49851     INA226AIDGSR
+U4     Power Input        AP2112K-3.3            C51118     AP2112K-3.3TRG1
+U5     24 V Loop Supply   MT3608                 C84817     MT3608
+
+
+SECTION 2 -- PIN CONNECTIONS
+
+For each pin: the net it sits on, and the other pins on that net.
+Pins on GND show only 'GND' -- the full ground membership is in Section 3.
+
+--- C1  (1uF)  block: Microcontroller
+   pin 1                   EN         U1.3 (EN), R1.2 (), SW1.1 (1), SW1.3 (3)
+   pin 2                   GND        
+
+--- C2  (22uF)  block: Microcontroller
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   GND        
+
+--- C3  (100nF)  block: Microcontroller
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   GND        
+
+--- C6  (1uF)  block: Power Input
+   pin 1                   +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), Q3.2 (S), R21.1 (), C12.1 ()
+   pin 2                   GND        
+
+--- C7  (10uF)  block: Power Input
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   GND        
+
+--- C8  (100nF)  block: 4-20 Ma Loop
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), TP4.1 (1)
+   pin 2                   GND        
+
+--- C9  (100nF)  block: 4-20 Ma Loop
+   pin 1                   INA_INP    R13.2 (), U3.10 (VIN+)
+   pin 2                   INA_INN    R14.2 (), U3.9 (VIN-)
+
+--- C10  (10uF/50V)  block: 24 V Loop Supply
+   pin 1                   VIN_SW     Q3.3 (D), U5.5 (IN), U5.4 (EN), L1.1 (1)
+   pin 2                   GND        
+
+--- C11  (10uF/50V)  block: 24 V Loop Supply
+   pin 1                   +24V       D2.1 (K), R10.1 (), R16.1 (), Q2.2 (E), TP3.1 (1)
+   pin 2                   GND        
+
+--- C12  (100nF)  block: 24 V Loop Supply
+   pin 1                   +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), R21.1 ()
+   pin 2                   SW_GATE    Q3.1 (G), R21.2 (), R22.1 ()
+
+--- D1  (USBLC6-2SC6)  block: Power Input
+   pin 1      I/O1         USB_P      J1.A6 (Dp1), J1.B6 (Dp2), D1.6 (I/O1), U1.14 (IO20)
+   pin 2      GND          GND        
+   pin 3      I/O2         USB_N      J1.A7 (Dn1), J1.B7 (Dn2), D1.4 (I/O2), U1.13 (IO19)
+   pin 4      I/O2         USB_N      J1.A7 (Dn1), J1.B7 (Dn2), D1.3 (I/O2), U1.13 (IO19)
+   pin 5      VBUS         +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), C6.1 (), Q3.2 (S), R21.1 (), C12.1 ()
+   pin 6      I/O1         USB_P      J1.A6 (Dp1), J1.B6 (Dp2), D1.1 (I/O1), U1.14 (IO20)
+
+--- D2  (SS34)  block: 24 V Loop Supply
+   pin 1      K            +24V       C11.1 (), R10.1 (), R16.1 (), Q2.2 (E), TP3.1 (1)
+   pin 2      A            MT_SW      U5.1 (SW), L1.2 (2)
+
+--- D3  (SMAJ28A)  block: 4-20 Ma Loop
+   pin 1      C            LOOP_V     D4.1 (K), J2.3 (3), R20.1 (), TP1.1 (1)
+   pin 2      A            GND        
+
+--- D4  (1N4148W)  block: 4-20 Ma Loop
+   pin 1      K            LOOP_V     J2.3 (3), D3.1 (C), R20.1 (), TP1.1 (1)
+   pin 2      A            LOOP_C     Q1.2 (C), Q1.4 (C)
+
+--- D5  (SMAJ12A)  block: 4-20 Ma Loop
+   pin 1      C            LOOP_RTN   J2.2 (2), R12.1 (), R13.1 (), TP2.1 (1)
+   pin 2      A            GND        
+
+--- J1  (USB-C Receptacle)  block: Power Input
+   pin 13     EH           GND        
+   pin 14     EH           GND        
+   pin A1B12  GND          GND        
+   pin A4B9   VBUS         +5V        U4.1 (VIN), U4.3 (EN), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), R21.1 (), C12.1 ()
+   pin A5     CC1          CC1        R7.1 ()
+   pin A6     Dp1          USB_P      J1.B6 (Dp2), D1.1 (I/O1), D1.6 (I/O1), U1.14 (IO20)
+   pin A7     Dn1          USB_N      J1.B7 (Dn2), D1.3 (I/O2), D1.4 (I/O2), U1.13 (IO19)
+   pin A8     SBU1         (NC)       -- not connected --
+   pin B1A12  GND          GND        
+   pin B4A9   VBUS         +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), R21.1 (), C12.1 ()
+   pin B5     CC2          CC2        R8.1 ()
+   pin B6     Dp2          USB_P      J1.A6 (Dp1), D1.1 (I/O1), D1.6 (I/O1), U1.14 (IO20)
+   pin B7     Dn2          USB_N      J1.A7 (Dn1), D1.3 (I/O2), D1.4 (I/O2), U1.13 (IO19)
+   pin B8     SBU2         (NC)       -- not connected --
+
+--- J2  (4-20mA Loop)  block: 4-20 Ma Loop
+   pin 1      1            GND        
+   pin 2      2            LOOP_RTN   R12.1 (), R13.1 (), D5.1 (C), TP2.1 (1)
+   pin 3      3            LOOP_V     D4.1 (K), D3.1 (C), R20.1 (), TP1.1 (1)
+
+--- L1  (22uH)  block: 24 V Loop Supply
+   pin 1      1            VIN_SW     Q3.3 (D), U5.5 (IN), U5.4 (EN), C10.1 ()
+   pin 2      2            MT_SW      U5.1 (SW), D2.2 (A)
+
+--- LED1  (Power)  block: Power Input
+   pin 1      K            GND        
+   pin 2      A            LED_A      R9.2 ()
+
+--- Q1  (BCP53-16)  block: 4-20 Ma Loop
+   pin 1      B            LOOP_DRV   Q2.3 (C), R17.1 ()
+   pin 2      C            LOOP_C     Q1.4 (C), D4.2 (A)
+   pin 3      E            LOOP_SNS   R16.2 (), R18.1 ()
+   pin 4      C            LOOP_C     Q1.2 (C), D4.2 (A)
+
+--- Q2  (MMBT5401)  block: 4-20 Ma Loop
+   pin 1      B            LOOP_FB    R18.2 ()
+   pin 2      E            +24V       D2.1 (K), C11.1 (), R10.1 (), R16.1 (), TP3.1 (1)
+   pin 3      C            LOOP_DRV   Q1.1 (B), R17.1 ()
+
+--- Q3  (AO3401A)  block: 24 V Loop Supply
+   pin 1      G            SW_GATE    R21.2 (), C12.2 (), R22.1 ()
+   pin 2      S            +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), R21.1 (), C12.1 ()
+   pin 3      D            VIN_SW     U5.5 (IN), U5.4 (EN), L1.1 (1), C10.1 ()
+
+--- Q4  (2N7002)  block: 24 V Loop Supply
+   pin 1      G            MT_EN      U1.18 (IO10), R15.2 (), TP5.1 (1)
+   pin 2      S            GND        
+   pin 3      D            SW_PD      R22.2 ()
+
+--- R1  (10k)  block: Microcontroller
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   EN         U1.3 (EN), SW1.1 (1), SW1.3 (3), C1.1 ()
+
+--- R5  (4.7k)  block: Microcontroller
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   I2C_SDA    U1.12 (IO8), U3.4 (SDA)
+
+--- R6  (4.7k)  block: Microcontroller
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   I2C_SCL    U1.17 (IO9), U3.5 (SCL)
+
+--- R7  (5.1k)  block: Power Input
+   pin 1                   CC1        J1.A5 (CC1)
+   pin 2                   GND        
+
+--- R8  (5.1k)  block: Power Input
+   pin 1                   CC2        J1.B5 (CC2)
+   pin 2                   GND        
+
+--- R9  (330)  block: Power Input
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   LED_A      LED1.2 (A)
+
+--- R10  (390k)  block: 24 V Loop Supply
+   pin 1                   +24V       D2.1 (K), C11.1 (), R16.1 (), Q2.2 (E), TP3.1 (1)
+   pin 2                   MT_FB      U5.3 (FB), R11.1 ()
+
+--- R11  (10k)  block: 24 V Loop Supply
+   pin 1                   MT_FB      U5.3 (FB), R10.2 ()
+   pin 2                   GND        
+
+--- R12  (3.32)  block: 4-20 Ma Loop
+   pin 1                   LOOP_RTN   J2.2 (2), R13.1 (), D5.1 (C), TP2.1 (1)
+   pin 2                   GND        
+
+--- R13  (10)  block: 4-20 Ma Loop
+   pin 1                   LOOP_RTN   J2.2 (2), R12.1 (), D5.1 (C), TP2.1 (1)
+   pin 2                   INA_INP    U3.10 (VIN+), C9.1 ()
+
+--- R14  (10)  block: 4-20 Ma Loop
+   pin 1                   GND        
+   pin 2                   INA_INN    U3.9 (VIN-), C9.2 ()
+
+--- R15  (100k)  block: 24 V Loop Supply
+   pin 1                   +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 2                   MT_EN      U1.18 (IO10), Q4.1 (G), TP5.1 (1)
+
+--- R16  (18)  block: 4-20 Ma Loop
+   pin 1                   +24V       D2.1 (K), C11.1 (), R10.1 (), Q2.2 (E), TP3.1 (1)
+   pin 2                   LOOP_SNS   Q1.3 (E), R18.1 ()
+
+--- R17  (47k)  block: 4-20 Ma Loop
+   pin 1                   LOOP_DRV   Q1.1 (B), Q2.3 (C)
+   pin 2                   GND        
+
+--- R18  (1k)  block: 4-20 Ma Loop
+   pin 1                   LOOP_SNS   R16.2 (), Q1.3 (E)
+   pin 2                   LOOP_FB    Q2.1 (B)
+
+--- R20  (10k)  block: 4-20 Ma Loop
+   pin 1                   LOOP_V     D4.1 (K), J2.3 (3), D3.1 (C), TP1.1 (1)
+   pin 2                   INA_VBUS   U3.8 (VBUS)
+
+--- R21  (390k)  block: 24 V Loop Supply
+   pin 1                   +5V        U4.1 (VIN), U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), C12.1 ()
+   pin 2                   SW_GATE    Q3.1 (G), C12.2 (), R22.1 ()
+
+--- R22  (100k)  block: 24 V Loop Supply
+   pin 1                   SW_GATE    Q3.1 (G), R21.2 (), C12.2 ()
+   pin 2                   SW_PD      Q4.3 (D)
+
+--- SW1  (RESET)  block: Microcontroller
+   pin 1      1            EN         U1.3 (EN), R1.2 (), SW1.3 (3), C1.1 ()
+   pin 2      2            GND        
+   pin 3      3            EN         U1.3 (EN), R1.2 (), SW1.1 (1), C1.1 ()
+   pin 4      4            GND        
+
+--- SW2  (BOOT)  block: Microcontroller
+   pin 1      1            IO0        U1.27 (IO0), SW2.3 (3)
+   pin 2      2            GND        
+   pin 3      3            IO0        U1.27 (IO0), SW2.1 (1)
+   pin 4      4            GND        
+
+--- TP1  (LOOP_V)  block: 24 V Loop Supply
+   pin 1      1            LOOP_V     D4.1 (K), J2.3 (3), D3.1 (C), R20.1 ()
+
+--- TP2  (LOOP_RTN)  block: 24 V Loop Supply
+   pin 1      1            LOOP_RTN   J2.2 (2), R12.1 (), R13.1 (), D5.1 (C)
+
+--- TP3  (+24V)  block: 24 V Loop Supply
+   pin 1      1            +24V       D2.1 (K), C11.1 (), R10.1 (), R16.1 (), Q2.2 (E)
+
+--- TP4  (+3V3)  block: 24 V Loop Supply
+   pin 1      1            +3V3       U1.2 (3V3), U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 ()
+
+--- TP5  (MT_EN)  block: 24 V Loop Supply
+   pin 1      1            MT_EN      U1.18 (IO10), Q4.1 (G), R15.2 ()
+
+--- U1  (ESP32-S3-WROOM-1U-N4)  block: Microcontroller
+   pin 1      GND          GND        
+   pin 2      3V3          +3V3       U3.6 (VS+), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 3      EN           EN         R1.2 (), SW1.1 (1), SW1.3 (3), C1.1 ()
+   pin 4      IO4          (NC)       -- not connected --
+   pin 5      IO5          (NC)       -- not connected --
+   pin 6      IO6          (NC)       -- not connected --
+   pin 7      IO7          (NC)       -- not connected --
+   pin 8      IO15         (NC)       -- not connected --
+   pin 9      IO16         (NC)       -- not connected --
+   pin 10     IO17         (NC)       -- not connected --
+   pin 11     IO18         (NC)       -- not connected --
+   pin 12     IO8          I2C_SDA    U3.4 (SDA), R5.2 ()
+   pin 13     IO19         USB_N      J1.A7 (Dn1), J1.B7 (Dn2), D1.3 (I/O2), D1.4 (I/O2)
+   pin 14     IO20         USB_P      J1.A6 (Dp1), J1.B6 (Dp2), D1.1 (I/O1), D1.6 (I/O1)
+   pin 15     IO3          (NC)       -- not connected --
+   pin 16     IO46         (NC)       -- not connected --
+   pin 17     IO9          I2C_SCL    U3.5 (SCL), R6.2 ()
+   pin 18     IO10         MT_EN      Q4.1 (G), R15.2 (), TP5.1 (1)
+   pin 19     IO11         (NC)       -- not connected --
+   pin 20     IO12         (NC)       -- not connected --
+   pin 21     IO13         (NC)       -- not connected --
+   pin 22     IO14         (NC)       -- not connected --
+   pin 23     IO21         (NC)       -- not connected --
+   pin 24     IO47         (NC)       -- not connected --
+   pin 25     IO48         (NC)       -- not connected --
+   pin 26     IO45         (NC)       -- not connected --
+   pin 27     IO0          IO0        SW2.1 (1), SW2.3 (3)
+   pin 28     IO35         (NC)       -- not connected --
+   pin 29     IO36         (NC)       -- not connected --
+   pin 30     IO37         (NC)       -- not connected --
+   pin 31     IO38         (NC)       -- not connected --
+   pin 32     IO39         (NC)       -- not connected --
+   pin 33     IO40         (NC)       -- not connected --
+   pin 34     IO41         (NC)       -- not connected --
+   pin 35     IO42         (NC)       -- not connected --
+   pin 36     RXD0         (NC)       -- not connected --
+   pin 37     TXD0         (NC)       -- not connected --
+   pin 38     IO2          (NC)       -- not connected --
+   pin 39     IO1          (NC)       -- not connected --
+   pin 40     GND          GND        
+   pin 41     GND          GND        
+
+--- U3  (INA226AIDGSR)  block: 4-20 Ma Loop
+   pin 1      A1           GND        
+   pin 2      A0           GND        
+   pin 3      Alert        (NC)       -- not connected --
+   pin 4      SDA          I2C_SDA    U1.12 (IO8), R5.2 ()
+   pin 5      SCL          I2C_SCL    U1.17 (IO9), R6.2 ()
+   pin 6      VS+          +3V3       U1.2 (3V3), U4.5 (VOUT), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+   pin 7      GND          GND        
+   pin 8      VBUS         INA_VBUS   R20.2 ()
+   pin 9      VIN-         INA_INN    R14.2 (), C9.2 ()
+   pin 10     VIN+         INA_INP    R13.2 (), C9.1 ()
+
+--- U4  (AP2112K-3.3)  block: Power Input
+   pin 1      VIN          +5V        U4.3 (EN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), R21.1 (), C12.1 ()
+   pin 2      GND          GND        
+   pin 3      EN           +5V        U4.1 (VIN), J1.A4B9 (VBUS), J1.B4A9 (VBUS), D1.5 (VBUS), C6.1 (), Q3.2 (S), R21.1 (), C12.1 ()
+   pin 4      NC           (NC)       -- not connected --
+   pin 5      VOUT         +3V3       U1.2 (3V3), U3.6 (VS+), R1.1 (), R5.1 (), R6.1 (), R9.1 (), R15.1 (), C2.1 (), C3.1 (), C7.1 (), C8.1 (), TP4.1 (1)
+
+--- U5  (MT3608)  block: 24 V Loop Supply
+   pin 1      SW           MT_SW      L1.2 (2), D2.2 (A)
+   pin 2      GND          GND        
+   pin 3      FB           MT_FB      R10.2 (), R11.1 ()
+   pin 4      EN           VIN_SW     Q3.3 (D), U5.5 (IN), L1.1 (1), C10.1 ()
+   pin 5      IN           VIN_SW     Q3.3 (D), U5.4 (EN), L1.1 (1), C10.1 ()
+   pin 6      NC           (NC)       -- not connected --
+
+
+SECTION 3 -- NETS
+
++24V  (6 pins)
+   C11.1, D2.1, Q2.2, R10.1, R16.1, TP3.1
+
++3V3  (13 pins)
+   C2.1, C3.1, C7.1, C8.1, R1.1, R5.1, R6.1, R9.1, R15.1, TP4.1, U1.2, U3.6, U4.5
+
++5V  (9 pins)
+   C6.1, C12.1, D1.5, J1.A4B9, J1.B4A9, Q3.2, R21.1, U4.1, U4.3
+
+GND  (36 pins)
+   C1.2, C2.2, C3.2, C6.2, C7.2, C8.2, C10.2, C11.2, D1.2, D3.2, D5.2, J1.A1B12, J1.B1A12, J1.13, J1.14, J2.1, LED1.1, Q4.2, R7.2, R8.2, R11.2, R12.2, R14.1, R17.2, SW1.2, SW1.4, SW2.2, SW2.4, U1.1, U1.40, U1.41, U3.1, U3.2, U3.7, U4.2, U5.2
+
+CC1  (2 pins)
+   J1.A5, R7.1
+
+CC2  (2 pins)
+   J1.B5, R8.1
+
+EN  (5 pins)
+   C1.1, R1.2, SW1.1, SW1.3, U1.3
+
+I2C_SCL  (3 pins)
+   R6.2, U1.17, U3.5
+
+I2C_SDA  (3 pins)
+   R5.2, U1.12, U3.4
+
+INA_INN  (3 pins)
+   C9.2, R14.2, U3.9
+
+INA_INP  (3 pins)
+   C9.1, R13.2, U3.10
+
+INA_VBUS  (2 pins)
+   R20.2, U3.8
+
+IO0  (3 pins)
+   SW2.1, SW2.3, U1.27
+
+LED_A  (2 pins)
+   LED1.2, R9.2
+
+LOOP_C  (3 pins)
+   D4.2, Q1.2, Q1.4
+
+LOOP_DRV  (3 pins)
+   Q1.1, Q2.3, R17.1
+
+LOOP_FB  (2 pins)
+   Q2.1, R18.2
+
+LOOP_RTN  (5 pins)
+   D5.1, J2.2, R12.1, R13.1, TP2.1
+
+LOOP_SNS  (3 pins)
+   Q1.3, R16.2, R18.1
+
+LOOP_V  (5 pins)
+   D3.1, D4.1, J2.3, R20.1, TP1.1
+
+MT_EN  (4 pins)
+   Q4.1, R15.2, TP5.1, U1.18
+
+MT_FB  (3 pins)
+   R10.2, R11.1, U5.3
+
+MT_SW  (3 pins)
+   D2.2, L1.2, U5.1
+
+SW_GATE  (4 pins)
+   C12.2, Q3.1, R21.2, R22.1
+
+SW_PD  (2 pins)
+   Q4.3, R22.2
+
+USB_N  (5 pins)
+   D1.3, D1.4, J1.A7, J1.B7, U1.13
+
+USB_P  (5 pins)
+   D1.1, D1.6, J1.A6, J1.B6, U1.14
+
+VIN_SW  (5 pins)
+   C10.1, L1.1, Q3.3, U5.5, U5.4
+
+
+SECTION 4 -- NOTES FOR REWORK
+
+Layout
+  One A3 sheet, four blocks in signal-flow order:
+    Power Input      USB-C input, ESD clamp, AP2112K 3.3 V LDO, power LED
+    Microcontroller  ESP32-S3-WROOM-1-N4, reset/boot buttons, I2C pull-ups
+    24 V Loop Supply MT3608 boost, 5 V -> 24 V loop supply
+    4-20 Ma Loop     loop terminal, 4.02 ohm shunt, INA226 current monitor
+
+Power rails are power-port symbols (global nets). Blocks connect by net label:
+USB_P/USB_N (USB-C -> ESP32-S3) and I2C_SDA/I2C_SCL (ESP32-S3 -> INA226).
+
+Polarity / orientation
+  D2  SS34 Schottky: cathode (pin 1) to +24V, anode (pin 2) to the switch node.
+  D3  SMAJ36A TVS: cathode (pin 1) to +24V, anode (pin 2) to the loop return.
+  LED1 anode (pin 2) from R9, cathode (pin 1) to GND.
+  R13 pin 2 is the INA226 side; R14 pin 1 is the ground side.
+
+ESP32-S3 strapping pins -- do not repurpose without checking
+  IO0  (pin 27) internal pull-up; SW2 pulls it low for download mode.
+  IO46 (pin 16) internal pull-down; must stay low at reset. Left NC.
+  IO45 (pin 26) VDD_SPI select; must stay low on the -N4 module. Left NC.
+  IO3  (pin 15) no internal pull; JTAG source select only. Left NC.
+
+Calculated values
+  R10/R11  MT3608 feedback: Vout = 0.6 x (1 + 390k/10k) = 24.00 V
+  R12      shunt: 20 mA x 4.02 ohm = 80.4 mV = 98% of INA226 full scale
+  R7/R8    USB-C CC pulldowns, 5.1 k = UFP advertising default current
+  R5/R6    I2C pull-ups, 4.7 k for 400 kHz on a short single-target bus
+  R9       LED: (3.3 - 1.9) / 330 = 4.2 mA
+
+Two-pin nets (CC1, CC2, LED_A, MT_SW, MT_FB, INA_INP, INA_INN, LOOP_RTN) are
+point-to-point and can be rerouted freely. GND, +3V3, +5V and +24V are shared
+rails -- check Section 3 before moving anything on them.

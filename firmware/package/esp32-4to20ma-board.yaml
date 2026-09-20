@@ -1,0 +1,641 @@
+# =============================================================================
+# ESP32 4-20 mA ESPHome Sensor Board  --  shared package, Rev G hardware
+# =============================================================================
+#
+# This file is the whole instrument: board definition, I2C, the INA226, the
+# calibration chain, the fault classifier and the short-circuit protection.
+# It is meant to be pulled in by a short per-device file, which supplies only
+# a name, a Wi-Fi network and the process scaling:
+#
+#   packages:
+#     loop_board: github://Diode663/<repo>/firmware/package/esp32-4to20ma-board.yaml@main
+#
+# See ../loop-sensor-1.yaml for a complete example, and ../README.md for the
+# calibration procedure.
+#
+# -----------------------------------------------------------------------------
+# The hardware this file assumes (all of it read out of the board's netlist,
+# not a generic template -- see ../../netlist_report.txt)
+# -----------------------------------------------------------------------------
+#   INA226        I2C 0x40  (U3 pins A0 and A1 both strapped to GND)
+#   I2C bus       SDA = GPIO8 (U1 pin 12), SCL = GPIO9 (U1 pin 17), 4.7k pull-ups
+#   Shunt         R12 = 3.32 ohm, LOW SIDE, between LOOP_RTN and GND.
+#                 VIN+ on LOOP_RTN, VIN- on GND, so loop current reads POSITIVE
+#                 and a backwards sourcing transmitter reads NEGATIVE.
+#   Full scale    the INA226's shunt input is fixed at +/-81.92 mV with no PGA,
+#                 so 3.32 ohm puts the ceiling at 24.67 mA. Above that the ADC
+#                 clips -- that is NOT the hardware limiter, which is at ~33 mA.
+#   VBUS pin      reads LOOP_V through R20 = 10k into the INA226's 830k input
+#                 impedance, so the chip sees 830/840 of the truth -> x1.01205
+#   Loop power    MT_EN = GPIO10 (U1 pin 18). HIGH = loop supply ON.
+#                 R15 (100k to 3V3) holds it HIGH, so the loop is powered from
+#                 the instant 3V3 comes up, before ESPHome runs. See `switch:`.
+#   Buttons       SW1 = EN (hardware reset, invisible to firmware)
+#                 SW2 = GPIO0 (strapping pin, free to read after boot)
+#   LED1          hardwired +3V3 -> R9 -> LED1. NOT controllable. There is no
+#                 user LED on this board; all status goes to Home Assistant.
+#   USB           native, IO19/IO20, so the logger's default USB_SERIAL_JTAG is
+#                 the right console -- there is no UART bridge to fall back on.
+#   Flash         N4 module: 4 MB, NO PSRAM. With OTA that leaves about 1.9 MB
+#                 for the application. Do not add `psram:`, and think twice
+#                 before adding anything that pulls in Bluetooth.
+# =============================================================================
+
+substitutions:
+  # Every one of these is meant to be overridden by the device file.
+  device_name: "loop-sensor"
+  friendly_name: "Loop Sensor"
+
+  # --- Hardware constants. Only change these if the board changes. ----------
+  shunt_ohms: "3.32"          # R12
+  vbus_gain: "1.01205"        # (830k + R20 10k) / 830k
+  adc_ceiling_ma: "24.67"     # 81.92 mV / 3.32 ohm -- the INA226 clips here
+
+  # --- Factory calibration --------------------------------------------------
+  # The reference currents you will feed in, and the raw readings you get back.
+  # Defaults are the identity. These are only the STARTING point: the
+  # "Calibrate" buttons overwrite them at runtime and the result survives a
+  # reboot. See ../README.md.
+  cal_ref_low: "4.000"
+  cal_ref_high: "20.000"
+  cal_meas_low: "4.000"
+  cal_meas_high: "20.000"
+  cal_capture_window: "2.0"   # refuse to capture further than this from the reference
+
+  # --- Process variable: what the 4-20 mA actually represents --------------
+  pv_name: "Process value"
+  pv_unit: "%"
+  pv_min: "0.0"               # engineering units at 4 mA
+  pv_max: "100.0"             # engineering units at 20 mA
+  pv_decimals: "2"
+  pv_sqrt: "false"            # true for a DP transmitter measuring flow
+
+  # --- NAMUR NE43 thresholds, in mA ----------------------------------------
+  ne43_fail_low: "3.6"
+  ne43_under: "3.8"
+  ne43_over: "20.5"
+  ne43_fail_high: "21.0"
+
+  # --- Loop supply health --------------------------------------------------
+  loop_v_low: "20.0"          # below this with current flowing = not trustworthy
+  loop_v_short: "3.0"         # below this = the field pair is shorted
+  open_circuit_ma: "0.1"      # below this = nothing connected / wire broken
+
+  # --- Response -------------------------------------------------------------
+  sample_interval: "1s"
+  median_window: "5"          # 5 x 1 s -> about 3 s to settle after a step
+  short_persist_s: "3"        # seconds of short before the supply is cut
+  short_cooldown_s: "30"      # seconds off before an automatic retry
+  short_max_retries: "3"      # after this many, latch off and wait for a human
+
+# =============================================================================
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  comment: "ESP32-S3 single-channel 4-20 mA loop reader, Rev G hardware"
+  # The version this package was validated against. Several things used here
+  # (encrypted OTA, ignore_strapping_warning) are not in older releases.
+  min_version: 2026.9.0
+  project:
+    name: "diode663.esp32_4to20ma_board"
+    version: "G"
+  on_boot:
+    # Publish the restored calibration once at startup, so the entity is never
+    # blank and the log always states what the board is actually using.
+    priority: -100
+    then:
+      - script.execute: report_calibration
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+logger:
+  level: INFO
+  # Default on the S3 is USB_SERIAL_JTAG, which is exactly what IO19/IO20 are
+  # wired to. Stated explicitly because this board has no UART bridge and no
+  # broken-out TX/RX -- if this is wrong there is no console at all.
+  hardware_uart: USB_SERIAL_JTAG
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  # Encrypted OTA reusing the API key, rather than a password. A password costs
+  # about 3.5 KB of flash for no extra security once the API key exists, and
+  # flash is the scarce resource on an N4 module.
+  - platform: esphome
+    encryption:
+      key: !secret api_encryption_key
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name} Setup"
+    password: !secret ap_password
+
+captive_portal:
+
+# -----------------------------------------------------------------------------
+# I2C -- the only bus on the board
+# -----------------------------------------------------------------------------
+i2c:
+  id: bus_a
+  sda: GPIO8
+  scl: GPIO9
+  frequency: 400kHz
+  scan: true
+
+# -----------------------------------------------------------------------------
+# State
+# -----------------------------------------------------------------------------
+globals:
+  # --- Calibration, held across reboots ------------------------------------
+  - id: cal_lo
+    type: float
+    restore_value: true
+    initial_value: '${cal_meas_low}'
+
+  - id: cal_hi
+    type: float
+    restore_value: true
+    initial_value: '${cal_meas_high}'
+
+  # --- Fault state ----------------------------------------------------------
+  - id: loop_status_code
+    type: int
+    restore_value: false
+    initial_value: '8'          # start as "no data"
+
+  - id: short_timer
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+
+  - id: short_retries
+    type: int
+    restore_value: false
+    initial_value: '0'
+
+  - id: latched_off
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+
+  # Last status actually pushed to Home Assistant. The status text is
+  # recalculated every second; without this it would write 86 400 identical
+  # states a day into the recorder.
+  - id: last_published_status
+    type: int
+    restore_value: false
+    initial_value: '-1'
+
+# =============================================================================
+# MEASUREMENT
+#
+#   INA226 shunt register  ->  loop_current_raw (mA, uncalibrated)
+#                          ->  loop_current     (mA, two-point calibrated)
+#                          ->  process_value    (engineering units)
+#
+# The raw stage is a real entity on purpose: it is what you read while
+# calibrating, and what the capture buttons latch.
+# =============================================================================
+sensor:
+  - platform: ina226
+    address: 0x40
+    i2c_id: bus_a
+    shunt_resistance: ${shunt_ohms} ohm
+
+    # The chip's own current and power registers are not used -- see below --
+    # but max_current still sets the calibration register, so give it a value
+    # that matches this board rather than the 3.2 A default.
+    max_current: 0.025A
+
+    # 1100 us x 128 averages = 140.8 ms per channel, 281.6 ms for both.
+    # The INA226 has no 50/60 Hz notch and no averaging length lands on a whole
+    # number of mains cycles, so hum is rejected by brute force here and by the
+    # median filter below.
+    adc_time:
+      voltage: 1100us
+      current: 1100us
+    adc_averaging: 128
+    update_interval: ${sample_interval}
+
+    # -- Loop current, taken from the SHUNT VOLTAGE register -----------------
+    # Deliberately not the current register. The shunt LSB is exactly 2.5 uV
+    # and involves no calibration register, so the conversion is deterministic:
+    # 2.5 uV / 3.32 ohm = 753 nA per count. The current register would add the
+    # truncation error of the integer CAL value on top, for no benefit.
+    shunt_voltage:
+      id: shunt_v
+      internal: true
+      filters:
+        - median:
+            window_size: ${median_window}
+            send_every: 1
+            send_first_at: 1
+      on_value:
+        then:
+          - sensor.template.publish:
+              id: loop_current_raw
+              state: !lambda return x * 1000.0f / ${shunt_ohms};
+
+    # -- Loop supply voltage, as seen at J2 pin 3 ---------------------------
+    bus_voltage:
+      id: loop_voltage
+      name: "Loop supply voltage"
+      unit_of_measurement: "V"
+      device_class: voltage
+      state_class: measurement
+      accuracy_decimals: 2
+      entity_category: diagnostic
+      filters:
+        # R20 (10k) against the INA226's 830k input impedance. Note that 830k
+        # is a *typical* datasheet figure, so this correction is itself only
+        # good to roughly 1%. Fine for a diagnostic, and the reason the current
+        # path does not depend on it.
+        - multiply: ${vbus_gain}
+        - median:
+            window_size: ${median_window}
+            send_every: 1
+            send_first_at: 1
+
+  # -- Uncalibrated current. Read this while calibrating. --------------------
+  - platform: template
+    id: loop_current_raw
+    name: "Loop current (raw)"
+    unit_of_measurement: "mA"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 4
+    entity_category: diagnostic
+    update_interval: never
+    on_value:
+      then:
+        - sensor.template.publish:
+            id: loop_current
+            state: !lambda |-
+              // Two-point straight line through the captured pair. Absorbs
+              // R12's 1% tolerance and its 200 ppm/C drift together with the
+              // INA226's own gain error -- which is exactly why one point is
+              // not enough.
+              const float ml = id(cal_lo), mh = id(cal_hi);
+              if (!std::isfinite(ml) || !std::isfinite(mh) || fabsf(mh - ml) < 1e-6f)
+                return x;
+              return ${cal_ref_low}
+                     + (x - ml) * (${cal_ref_high} - ${cal_ref_low}) / (mh - ml);
+
+  # -- Calibrated current ----------------------------------------------------
+  - platform: template
+    id: loop_current
+    name: "Loop current"
+    unit_of_measurement: "mA"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 3
+    update_interval: never
+
+  # -- The process variable --------------------------------------------------
+  - platform: template
+    id: process_value
+    name: "${pv_name}"
+    unit_of_measurement: "${pv_unit}"
+    state_class: measurement
+    accuracy_decimals: ${pv_decimals}
+    update_interval: never
+
+  # -- Percent of the 4-20 mA span ------------------------------------------
+  - platform: template
+    id: loop_percent
+    name: "Loop span"
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 2
+    entity_category: diagnostic
+    update_interval: never
+
+  # -- What the transmitter actually gets ------------------------------------
+  # LOOP_V is measured to board ground, so it includes the drop across the
+  # shunt. The transmitter sees that much less.
+  - platform: template
+    id: transmitter_voltage
+    name: "Transmitter voltage"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 2
+    entity_category: diagnostic
+    update_interval: never
+
+  - platform: wifi_signal
+    name: "Wi-Fi signal"
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
+
+  - platform: internal_temperature
+    name: "Board temperature"
+    entity_category: diagnostic
+    update_interval: 60s
+
+# =============================================================================
+# DERIVED VALUES + FAULT CLASSIFICATION
+# One place decides the status code; every entity below just reports it.
+# =============================================================================
+interval:
+  - interval: ${sample_interval}
+    then:
+      - lambda: |-
+          const float i   = id(loop_current).state;
+          const float v   = id(loop_voltage).state;
+          const bool  pwr = id(loop_power).state;
+
+          // ---- classify, most severe first --------------------------------
+          int s;
+          if (!pwr)                                       s = 7;   // loop power off
+          else if (std::isnan(i) || std::isnan(v))        s = 8;   // no data from the INA226
+          else if (v < ${loop_v_short})                   s = 6;   // field pair shorted
+          // The INA226 is bidirectional. A sourcing transmitter wired into
+          // pins 1-2 the wrong way round pushes current from GND into
+          // LOOP_RTN, which reads NEGATIVE -- that is not an open circuit, and
+          // it forward-biases D5, so it wants finding and fixing.
+          else if (i < -${open_circuit_ma})               s = 10;  // reversed polarity
+          else if (i < ${open_circuit_ma})                s = 9;   // open circuit
+          else if (v < ${loop_v_low})                     s = 5;   // supply sagging
+          else if (i > ${ne43_fail_high})                 s = 4;   // NAMUR fail high
+          else if (i < ${ne43_fail_low})                  s = 3;   // NAMUR fail low
+          else if (i > ${ne43_over})                      s = 2;   // over-range
+          else if (i < ${ne43_under})                     s = 1;   // under-range
+          else                                            s = 0;   // OK
+          id(loop_status_code) = s;
+
+          // A reading is usable at 0/1/2 only. Under- and over-range are real
+          // numbers just outside the calibrated span; everything else is not a
+          // measurement at all and is published as unknown rather than as a
+          // plausible-looking number.
+          const bool usable = (s <= 2);
+
+          // ---- percent of span ---------------------------------------------
+          id(loop_percent).publish_state(usable ? (i - 4.0f) / 16.0f * 100.0f : NAN);
+
+          // ---- process value ------------------------------------------------
+          if (!usable) {
+            id(process_value).publish_state(NAN);
+          } else {
+            float frac = (i - 4.0f) / 16.0f;
+            if (${pv_sqrt}) frac = sqrtf(frac < 0.0f ? 0.0f : frac);
+            id(process_value).publish_state(
+                ${pv_min} + frac * (${pv_max} - ${pv_min}));
+          }
+
+          // ---- what the transmitter sees ------------------------------------
+          id(transmitter_voltage).publish_state(
+              (std::isnan(i) || std::isnan(v))
+                  ? NAN
+                  : v - (i / 1000.0f * ${shunt_ohms}));
+
+          // ---- status text, published only when it changes ------------------
+          const int key = id(latched_off) ? 100 : s;
+          if (key == id(last_published_status)) return;
+          id(last_published_status) = key;
+
+          const char *txt;
+          switch (s) {
+            case 0:  txt = "OK";                        break;
+            case 1:  txt = "Under-range";               break;
+            case 2:  txt = "Over-range";                break;
+            case 3:  txt = "Fault: low (NAMUR)";        break;
+            case 4:  txt = "Fault: high (NAMUR)";       break;
+            case 5:  txt = "Fault: supply low";         break;
+            case 6:  txt = "Fault: field short";        break;
+            case 7:  txt = "Loop power off";            break;
+            case 8:  txt = "Fault: no sensor data";     break;
+            case 9:  txt = "Fault: open circuit";       break;
+            default: txt = "Fault: reversed polarity";  break;
+          }
+          if (id(latched_off)) txt = "Fault: short, latched off";
+          id(loop_status).publish_state(txt);
+
+  # ---------------------------------------------------------------------------
+  # Short-circuit protection. The hardware limiter already holds the current at
+  # about 33 mA and Q1 rides that out at 0.85 W of a 1.5 W package, so this is
+  # about not cooking the board over hours on a fault nobody is watching -- not
+  # about microseconds.
+  # ---------------------------------------------------------------------------
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (!id(loop_power).state || id(latched_off)) { id(short_timer) = 0.0f; return; }
+          const float v = id(loop_voltage).state;
+          if (!std::isnan(v) && v < ${loop_v_short}) {
+            id(short_timer) += 1.0f;
+          } else {
+            id(short_timer) = 0.0f;
+          }
+      - if:
+          condition:
+            lambda: return id(short_timer) >= ${short_persist_s};
+          then:
+            - script.execute: handle_short
+
+script:
+  - id: handle_short
+    mode: single
+    then:
+      - lambda: |-
+          id(short_timer) = 0.0f;
+          id(short_retries) += 1;
+          ESP_LOGW("loop", "Field short detected (attempt %d of %d) -- removing loop power",
+                   id(short_retries), ${short_max_retries});
+      - switch.turn_off: loop_power
+      - delay: ${short_cooldown_s}s
+      - if:
+          condition:
+            lambda: return id(short_retries) >= ${short_max_retries};
+          then:
+            - lambda: |-
+                id(latched_off) = true;
+                ESP_LOGE("loop", "Field short persisted through %d retries -- latched off. "
+                                 "Clear the fault, then turn Loop power back on.",
+                         ${short_max_retries});
+          else:
+            - logger.log: "Retrying loop power"
+            - switch.turn_on: loop_power
+
+  # Clears the retry counter after a good long run, so an intermittent fault
+  # days apart does not eventually latch the board off.
+  - id: clear_retries_after_good_run
+    mode: restart
+    then:
+      - delay: 10min
+      - lambda: id(short_retries) = 0;
+
+  - id: report_calibration
+    mode: restart
+    then:
+      - lambda: |-
+          const float ml = id(cal_lo), mh = id(cal_hi);
+          const float gain = (${cal_ref_high} - ${cal_ref_low}) / (mh - ml);
+          char buf[96];
+          snprintf(buf, sizeof(buf), "4mA=%.4f  20mA=%.4f  gain=%.5f  offset=%+.4f mA",
+                   ml, mh, gain, ${cal_ref_low} - ml * gain);
+          ESP_LOGI("cal", "%s", buf);
+          id(calibration_info).publish_state(buf);
+
+# =============================================================================
+# CONTROL
+# =============================================================================
+switch:
+  # MT_EN, GPIO10. HIGH turns on the Q3/Q4 soft-start load switch, which feeds
+  # the MT3608 boost. LOW removes the 24 V supply entirely -- with the Rev G
+  # load switch there is no 4.6 V left behind.
+  #
+  # NOTE: R15 is a 100k pull-up to 3V3, so from power-on until ESPHome
+  # configures this pin the loop is POWERED. That is fail-safe in the sense
+  # that the instrument still works with dead firmware, but it does mean
+  # firmware cannot guarantee the loop stays off across a reset.
+  # Do not treat this switch as a safety interlock.
+  - platform: gpio
+    pin: GPIO10
+    id: loop_power
+    name: "Loop power"
+    icon: "mdi:power-plug"
+    restore_mode: ALWAYS_ON
+    on_turn_on:
+      then:
+        # Turning this back on by hand is a deliberate act, so it gets a fresh
+        # set of retries rather than latching again on the next fault.
+        - lambda: |-
+            id(latched_off) = false;
+            id(short_retries) = 0;
+            id(short_timer) = 0.0f;
+        - script.execute: clear_retries_after_good_run
+    on_turn_off:
+      then:
+        - script.stop: clear_retries_after_good_run
+
+button:
+  # --- Calibration ----------------------------------------------------------
+  # Feed a reference current into J2 pins 3-2, let the reading settle (the
+  # median filter takes about 3 s), then press. The capture is refused if the
+  # raw reading is not near the reference, so a fat finger cannot silently
+  # destroy the calibration.
+  - platform: template
+    name: "Calibrate: capture 4 mA"
+    icon: "mdi:target"
+    entity_category: config
+    on_press:
+      then:
+        - lambda: |-
+            const float x = id(loop_current_raw).state;
+            if (std::isnan(x) || fabsf(x - ${cal_ref_low}) > ${cal_capture_window}) {
+              ESP_LOGE("cal", "Refused: raw reading %.4f mA is not within "
+                              "%.1f mA of %.3f mA", x, ${cal_capture_window},
+                       (float) ${cal_ref_low});
+              return;
+            }
+            id(cal_lo) = x;
+        - script.execute: report_calibration
+
+  - platform: template
+    name: "Calibrate: capture 20 mA"
+    icon: "mdi:target"
+    entity_category: config
+    on_press:
+      then:
+        - lambda: |-
+            const float x = id(loop_current_raw).state;
+            if (std::isnan(x) || fabsf(x - ${cal_ref_high}) > ${cal_capture_window}) {
+              ESP_LOGE("cal", "Refused: raw reading %.4f mA is not within "
+                              "%.1f mA of %.3f mA", x, ${cal_capture_window},
+                       (float) ${cal_ref_high});
+              return;
+            }
+            id(cal_hi) = x;
+        - script.execute: report_calibration
+
+  - platform: template
+    name: "Calibrate: reset to factory"
+    icon: "mdi:backup-restore"
+    entity_category: config
+    on_press:
+      then:
+        - lambda: |-
+            id(cal_lo) = ${cal_meas_low};
+            id(cal_hi) = ${cal_meas_high};
+        - script.execute: report_calibration
+
+  # --- Maintenance ----------------------------------------------------------
+  - platform: template
+    name: "Power-cycle the loop"
+    icon: "mdi:restart-alert"
+    entity_category: config
+    on_press:
+      then:
+        - switch.turn_off: loop_power
+        - delay: 5s
+        - switch.turn_on: loop_power
+
+  - platform: restart
+    name: "Restart"
+    entity_category: diagnostic
+
+binary_sensor:
+  # SW2 is wired GPIO0 -> GND. GPIO0 is a strapping pin, so it must be HIGH at
+  # reset -- its internal pull-up handles that, and holding it during power-up
+  # puts the module in download mode. After boot it is an ordinary input.
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+      # Deliberate: SW2 is the BOOT button and GPIO0 goes nowhere else on this
+      # board. The strapping requirement is "high at reset", which the internal
+      # pull-up satisfies.
+      ignore_strapping_warning: true
+    id: boot_button
+    name: "BOOT button"
+    entity_category: diagnostic
+    filters:
+      - delayed_on: 30ms
+
+  - platform: template
+    id: reading_valid
+    name: "Reading valid"
+    entity_category: diagnostic
+    lambda: return id(loop_status_code) <= 2;
+
+  - platform: template
+    name: "Loop fault"
+    device_class: problem
+    lambda: return id(loop_status_code) >= 3;
+
+text_sensor:
+  - platform: template
+    id: loop_status
+    name: "Loop status"
+    icon: "mdi:current-dc"
+    update_interval: never
+
+  - platform: template
+    id: calibration_info
+    name: "Calibration"
+    icon: "mdi:tune-variant"
+    entity_category: diagnostic
+    update_interval: never
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP address"
+      entity_category: diagnostic
