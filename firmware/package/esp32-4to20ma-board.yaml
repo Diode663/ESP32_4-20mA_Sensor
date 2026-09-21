@@ -8,7 +8,7 @@
 # a name, a Wi-Fi network and the process scaling:
 #
 #   packages:
-#     loop_board: github://Diode663/<repo>/firmware/package/esp32-4to20ma-board.yaml@main
+#     loop_board: github://Diode663/ESP32_4-20mA_Sensor/firmware/package/esp32-4to20ma-board.yaml@main
 #
 # See ../loop-sensor-1.yaml for a complete example, and ../README.md for the
 # calibration procedure.
@@ -84,6 +84,7 @@ substitutions:
   # --- Response -------------------------------------------------------------
   sample_interval: "1s"
   median_window: "5"          # 5 x 1 s -> about 3 s to settle after a step
+  stale_timeout_ms: "5000"    # no INA226 sample for this long = the reading is dead
   short_persist_s: "3"        # seconds of short before the supply is cut
   short_cooldown_s: "30"      # seconds off before an automatic retry
   short_max_retries: "3"      # after this many, latch off and wait for a human
@@ -196,6 +197,23 @@ globals:
     restore_value: false
     initial_value: '-1'
 
+  # --- Staleness watchdog ---------------------------------------------------
+  # ESPHome's ina226 component does NOT publish NAN when an I2C read fails: it
+  # calls status_set_warning() and returns, leaving every sensor holding its
+  # last good value forever. Without these two, a dead INA226 -- an I2C fault,
+  # a cracked joint, a brown-out on the 3V3 rail -- would leave the board
+  # cheerfully reporting the last current it happened to see. For a measuring
+  # instrument that is the worst possible failure: silently plausible.
+  - id: last_sample_ms
+    type: uint32_t
+    restore_value: false
+    initial_value: '0'
+
+  - id: was_stale
+    type: bool
+    restore_value: false
+    initial_value: 'true'
+
 # =============================================================================
 # MEASUREMENT
 #
@@ -242,6 +260,9 @@ sensor:
             send_first_at: 1
       on_value:
         then:
+          # Proof of life. The component reads bus voltage first and returns on
+          # failure, so a shunt publish means the whole update() succeeded.
+          - lambda: id(last_sample_ms) = millis();
           - sensor.template.publish:
               id: loop_current_raw
               state: !lambda return x * 1000.0f / ${shunt_ohms};
@@ -359,10 +380,28 @@ interval:
           const float v   = id(loop_voltage).state;
           const bool  pwr = id(loop_power).state;
 
+          // ---- is the INA226 still alive? ---------------------------------
+          // millis() is unsigned, so this stays correct across the ~49.7 day
+          // wrap. last_sample_ms == 0 means nothing has ever arrived.
+          const bool stale = (id(last_sample_ms) == 0) ||
+                             (millis() - id(last_sample_ms) > ${stale_timeout_ms});
+          if (stale && !id(was_stale)) {
+            // Going stale once: drop every reading to unknown rather than
+            // leaving the last good value sitting there looking healthy.
+            ESP_LOGE("loop", "No INA226 sample for %u ms -- readings are now unknown",
+                     (unsigned) (millis() - id(last_sample_ms)));
+            id(loop_current_raw).publish_state(NAN);
+            id(loop_current).publish_state(NAN);
+            id(loop_voltage).publish_state(NAN);
+          }
+          if (!stale && id(was_stale) && id(last_sample_ms) != 0)
+            ESP_LOGI("loop", "INA226 is answering again");
+          id(was_stale) = stale;
+
           // ---- classify, most severe first --------------------------------
           int s;
           if (!pwr)                                       s = 7;   // loop power off
-          else if (std::isnan(i) || std::isnan(v))        s = 8;   // no data from the INA226
+          else if (stale || std::isnan(i) || std::isnan(v)) s = 8; // no data from the INA226
           else if (v < ${loop_v_short})                   s = 6;   // field pair shorted
           // The INA226 is bidirectional. A sourcing transmitter wired into
           // pins 1-2 the wrong way round pushes current from GND into

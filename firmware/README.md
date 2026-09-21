@@ -4,9 +4,10 @@ ESPHome configuration for the Rev G board. It turns the INA226's shunt reading
 into a calibrated 4-20 mA measurement, classifies loop faults to NAMUR NE43,
 and protects the board against a sustained field short.
 
-Validated against **ESPHome 2026.9.0**: `esphome config` is clean and
-`esphome compile` builds at **867 KB of the 1.835 MB** application partition
-(47 %) with 30 % of RAM used, so there is real headroom on the N4 module.
+Validated against **ESPHome 2026.9.0**: `esphome config` is clean,
+`esphome compile` builds at **870 KB of the 1.835 MB** application partition
+(47 %) with 30 % of RAM used, and `test/test_fault_logic.py` passes 30 checks.
+There is real headroom on the N4 module.
 
 ## Files
 
@@ -99,9 +100,9 @@ is 0.8 % of reading, about 0.13 mA across the span.
 
 | Status | Means | Look at |
 |---|---|---|
-| `OK` | 4.0–20.0 mA | |
-| `Under-range` | 3.8–4.0 mA | Transmitter slightly below zero, or drift |
-| `Over-range` | 20.0–20.5 mA | Process above full scale |
+| `OK` | 3.8–20.5 mA — NE43's measuring range, which is wider than 4–20 | |
+| `Under-range` | 3.6–3.8 mA | Transmitter below zero and outside the measuring range |
+| `Over-range` | 20.5–21.0 mA | Process above full scale |
 | `Fault: low (NAMUR)` | below 3.6 mA | Transmitter signalling a fault, or a poor connection |
 | `Fault: high (NAMUR)` | above 21 mA | Transmitter fault, or a partial short. Note the ADC clips at **24.67 mA** — the hardware limiter is higher, at ~33 mA, so a hard short reads as "pegged" |
 | `Fault: open circuit` | under 0.1 mA | Nothing connected, or a broken wire |
@@ -111,6 +112,12 @@ is 0.8 % of reading, about 0.13 mA across the span.
 | `Fault: short, latched off` | three cuts in a row | Clear the short, then turn *Loop power* back on |
 | `Fault: no sensor data` | the INA226 is not answering | I²C, or the 3.3 V rail |
 | `Loop power off` | *Loop power* is off | |
+
+Note the bands: NE43's **measuring range is 3.8–20.5 mA**, not 4–20. A
+transmitter sitting at 3.9 mA is reporting slightly below zero, not faulting,
+so it reads `OK` and the process value goes slightly negative. Under- and
+over-range are the strips between the measuring range and the failure
+thresholds, and all three publish a reading. Everything below them does not.
 
 ## Short-circuit handling
 
@@ -123,12 +130,36 @@ failures the board **latches off** and says so, and only a human turning *Loop
 power* back on clears it. Ten minutes of healthy running resets the counter, so
 an intermittent fault weeks apart never accumulates into a latch.
 
+## Tests
+
+```bash
+python test/test_fault_logic.py
+```
+
+The fault classifier is an eleven-state precedence ladder inside a C++ lambda.
+`esphome compile` proves it is valid C++; it cannot prove it is the *right*
+C++. `test/test_fault_logic.py` executes the decision table — every state,
+the precedence between them, the NE43 boundaries and the calibration maths,
+including the degenerate case where both calibration points are captured at
+the same current. It reads the thresholds **out of the package YAML**, so
+changing a substitution cannot silently desynchronise the test from the
+firmware. 30 checks, and it needs nothing but Python.
+
 ## Things worth knowing
 
 - **The loop is powered before firmware runs.** R15 is a 100 kΩ pull-up on
   `MT_EN`, so the 24 V comes up with the 3.3 V rail and stays up until ESPHome
   configures GPIO10. The instrument therefore still works with dead firmware —
   but *Loop power* is **not a safety interlock**, and must not be used as one.
+- **A dead INA226 cannot masquerade as a live one.** ESPHome's `ina226`
+  component does *not* publish NaN when an I²C read fails — it sets an internal
+  warning and returns, leaving every sensor holding its last good value
+  indefinitely. A staleness watchdog therefore stamps `millis()` on each
+  successful read; more than 5 s without one forces `Fault: no sensor data` and
+  drops the current and voltage to unknown. Without it, a cracked joint or a
+  brown-out on the 3.3 V rail would leave the board reporting the last current
+  it happened to see, forever — the worst failure an instrument can have,
+  because it looks entirely plausible.
 - **There is no user LED.** LED1 is hardwired across the 3.3 V rail. All status
   goes to Home Assistant; there is nothing to look at on the board itself.
 - **Current comes from the shunt-voltage register**, not the chip's current
