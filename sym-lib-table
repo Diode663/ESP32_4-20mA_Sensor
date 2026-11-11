@@ -7,4 +7,5 @@
   (lib (name "Connector")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Connector.kicad_sym")(options "")(descr "KiCad connector symbols (TestPoint)"))
   (lib (name "Diode")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Diode.kicad_sym")(options "")(descr "KiCad diode symbols (1N4148W)"))
   (lib (name "Transistor_FET")(type "KiCad")(uri "${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym")(options "")(descr "KiCad FET symbols (load switch)"))
+  (lib (name "esp32_4to20ma_board_func")(type "KiCad")(uri "${KIPRJMOD}/libraries/esp32_4to20ma_board_func.kicad_sym")(options "")(descr "Functional symbols written by schlib"))
 )
