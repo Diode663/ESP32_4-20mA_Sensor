@@ -846,6 +846,44 @@ class Board:
         self._stale_holes.pop(ref, None)
         return fp
 
+    def text(self, s, x, y, size=1.0, thickness=None, angle=0, layer="F.SilkS", justify="center"):
+        """Legend text on the silkscreen: what a connector's pins are, which
+        button is which, the board's name and revision.
+
+        A board whose silkscreen carries designators only tells the person
+        holding it nothing they need: designators are for assembly, the legend
+        is for use. Label every field connector's pins, every button and
+        indicator, and put the name and revision somewhere visible.
+
+        Board-level silk text belongs to the script: the first call of a run
+        removes whatever text is already on either silk layer, so the legend
+        can be edited and re-run like everything else here (text typed in the
+        board editor is lost -- put it in the script). Text on the bottom
+        layer is mirrored so it reads from that side.
+
+        1.0 mm high with 0.15 mm strokes is the smallest that prints reliably
+        at the budget fabs (JLCPCB asks for 0.8 mm / 0.15 mm at least). DRC
+        reports text that lands on exposed copper as silk_over_copper."""
+        if not getattr(self, "_text_cleared", False):
+            for d in list(self.board.GetDrawings()):
+                if d.GetClass() == "PCB_TEXT" and d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+                    self._remove(d)
+            self._text_cleared = True
+        t = pcbnew.PCB_TEXT(self.board)
+        t.SetText(s)
+        lay = self.board.GetLayerID(layer)
+        t.SetLayer(lay)
+        t.SetPosition(self.pt(x, y))
+        t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size)))
+        t.SetTextThickness(mm(thickness if thickness else max(0.15, round(size * 0.15, 2))))
+        t.SetTextAngleDegrees(angle)
+        t.SetHorizJustify({"left": pcbnew.GR_TEXT_H_ALIGN_LEFT, "center": pcbnew.GR_TEXT_H_ALIGN_CENTER,
+                           "right": pcbnew.GR_TEXT_H_ALIGN_RIGHT}[justify])
+        if lay == pcbnew.B_SilkS:
+            t.SetMirrored(True)
+        self.board.Add(t)
+        return t
+
     # -- schematic linkage ------------------------------------------------
 
     def _netlist_root(self):

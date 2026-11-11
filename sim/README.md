@@ -15,6 +15,7 @@ simulator install is needed. Run each script with KiCad's Python:
 | `5_firmware_recovery.py` | A stuck Rev F loop released by pulsing MT_EN low |
 | `6_rev_g_limiter.py` | Rev G as built: limit and terminal voltage vs. temperature with worst-case hFE, and zero reverse current with D4 |
 | `7_usb_inrush.py` | Capacitance VBUS sees at attach, Rev F vs. the Rev G load switch (and why C12 is gate-to-source) |
+| `8_input_protection.py` | Rev H mA input (D5 28 V, F1, D6): what the shunt sees in a surge and with 24 V on the pin, and what D6 costs the reading |
 
 Q1/Q2 use the Fairchild 2N5401/MMBT5401 Gummel-Poon model. The transmitter is
 modelled generously -- zero current below its lift-off voltage, then whatever

@@ -3982,12 +3982,14 @@ class Design:
 
     def sheet(self, filename, title, paper="A4", comment=""):
         s = Sheet(self.lib, filename, title, paper, comment)
+        s.design = self               # so a block drawn on it can write a functional symbol
         self.children.append(s)
         return s
 
     def root_sheet(self, filename=None, title=None, paper="A4", comment=""):
         filename = filename or f"{self.name}.kicad_sch"
         self.root = Sheet(self.lib, filename, title or self.title, paper, comment)
+        self.root.design = self
         return self.root
 
     def link(self, child, x, y, w, h, pins=()):

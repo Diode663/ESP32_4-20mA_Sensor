@@ -208,33 +208,44 @@ def route_loop():
     # Q1: tab and pin 2 are one copper area, top and bottom, tied by six vias
     # under the body. 0.84 W worst case (a dead short until firmware drops MT_EN).
     track("/LOOP_C", [q14, q12], 1.5)
-    d42, d41 = pad("D4", 2, (35.25, 49.00), "/LOOP_C"), pad("D4", 1, (38.55, 49.00), "/LOOP_V")
-    track("/LOOP_C", [q12, (35.80, 47.6), (35.45, 47.95), (35.45, 48.6)], 0.5)
     for x in (34.6, 35.8, 37.0):
         for y in (41.8, 43.4):
             via("/LOOP_C", (x, y))
-    # LOOP_V: blocking diode -> round the south of D4 -> TVS, test point, terminal
-    d31, j23 = pad("D3", 1, (32.30, 48.80), "/LOOP_V"), pad("J2", 3, (30.50, 55.00), "/LOOP_V")
-    tp1 = pad("TP1", 1, (37.00, 51.60), "/LOOP_V")
-    track("/LOOP_V", [d41, (38.55, 50.0), (38.15, 50.4), (32.70, 50.4), (32.30, 50.0), d31], 0.5)
-    track("/LOOP_V", [(37.00, 50.4), tp1], 0.4)
-    track("/LOOP_V", [(32.30, 50.4), (30.50, 52.2), j23], 0.5)
-    # LOOP_RTN: terminal -> test point and TVS -> east, then up to the shunt's
-    # OUTER edge, so load current never shares copper with the Kelvin taps
-    j22, tp2 = pad("J2", 2, (25.50, 55.00), "/LOOP_RTN"), pad("TP2", 1, (25.55, 48.80), "/LOOP_RTN")
-    d51, r121 = pad("D5", 1, (23.20, 48.80), "/LOOP_RTN"), pad("R12", 1, (30.00, 42.84), "/LOOP_RTN")
-    track("/LOOP_RTN", [j22, (25.50, 49.2), tp2, d51], 0.5)
-    track("/LOOP_RTN", [tp2, (25.55, 47.35), (25.95, 46.95), (30.90, 46.95), (31.30, 46.55),
-                        (31.30, 43.2), (30.95, 42.84), (30.3, 42.84)], 0.4)
-    # the shunt's ground end and both TVS grounds go straight down to the plane
+    # Rev H. The row above the terminal is the mA wire's protection, so the
+    # blocking diode is upright in the strip right of the terminal: LOOP_C
+    # comes down to it through the gap between D6 and D3.
+    d42, d41 = pad("D4", 2, (34.00, 50.95), "/LOOP_C"), pad("D4", 1, (34.00, 54.25), "/LOOP_V")
+    track("/LOOP_C", [q12, (35.80, 47.4), (36.15, 47.75), (36.15, 50.2), (35.40, 50.95), d42], 0.5)
+    # LOOP_V: blocking diode -> terminal pin 3 one way, its TVS the other
+    d31, j23 = pad("D3", 1, (37.90, 53.20), "/LOOP_V"), pad("J2", 3, (30.50, 55.00), "/LOOP_V")
+    track("/LOOP_V", [d41, (35.50, 54.25), (36.55, 53.20), d31], 0.5)
+    track("/LOOP_V", [d41, (31.25, 54.25), (30.50, 55.00), j23], 0.5)
+    # LOOP_IN: terminal pin 2 -> test pad -> TVS on one side, fuse on the other
+    j22, tp2 = pad("J2", 2, (25.50, 55.00), "/LOOP_IN"), pad("TP2", 1, (25.55, 48.80), "/LOOP_IN")
+    d51, f11 = pad("D5", 1, (23.20, 48.80), "/LOOP_IN"), pad("F1", 1, (27.50, 48.80), "/LOOP_IN")
+    track("/LOOP_IN", [j22, (25.50, 49.2), tp2, d51], 0.5)
+    track("/LOOP_IN", [tp2, f11], 0.5)
+    # LOOP_RTN: fuse -> the diode across the shunt -> north to the shunt's
+    # OUTER edge, so load current never shares copper with the Kelvin taps.
+    # D6 is met before the shunt: a fault's current turns into it and the
+    # shunt sees only its forward drop.
+    f12, d62 = pad("F1", 2, (30.30, 48.80), "/LOOP_RTN"), pad("D6", 2, (32.10, 48.80), "/LOOP_RTN")
+    r121 = pad("R12", 1, (30.00, 42.84), "/LOOP_RTN")
+    track("/LOOP_RTN", [f12, d62], 0.5)
+    track("/LOOP_RTN", [(31.30, 48.80), (31.30, 43.2), (30.95, 42.84), (30.3, 42.84)], 0.4)
+    # grounds: the shunt's ground end and every clamp go straight down to the plane
     r122 = pad("R12", 2, (30.00, 44.66), "GND")
     for x in (29.6, 30.4):
         track("GND", [(x, 45.0), via("GND", (x, 45.95))], 0.5)
-    for ref, x in (("D3", 27.90), ("D5", 18.80)):
-        g = pad(ref, 2, (x, 48.80), "GND")
-        for dx in (-0.7, 0.7):
-            track("GND", [(x + dx, 49.6), via("GND", (x + dx, 50.45))], 0.5)
+    g5 = pad("D5", 2, (18.80, 48.80), "GND")
+    for dx in (-0.7, 0.7):
+        track("GND", [(18.80 + dx, 49.6), via("GND", (18.80 + dx, 50.45))], 0.5)
     track("GND", [(18.80, 49.6), (18.80, 51.4), (20.50, 53.1), pad("J2", 1, (20.50, 55.00), "GND")], 0.8)
+    # D6's cathode: one via beside it. D3's ground pad: two under its body.
+    d61, d32 = pad("D6", 1, (34.90, 48.80), "GND"), pad("D3", 2, (37.90, 48.80), "GND")
+    track("GND", [d61, (34.90, 49.65), via("GND", (35.20, 49.95))], 0.5)
+    for x in (37.40, 38.40):
+        track("GND", [(x, 49.6), via("GND", (x, 50.55))], 0.5)
 
 
 # ---------------------------------------------------------------------------
@@ -276,20 +287,21 @@ def route_ground():
     long or thin path, then stitching so the two pours act as one."""
     todo = [("C7", 2, (11.50, 30.30)), ("U4", 2, (8.00, 34.05)), ("C6", 2, (4.50, 30.60)),
             ("Q4", 2, (19.85, 27.65)), ("C2", 2, (10.25, 10.3)),
-            ("C1", 2, (10.9, 6.30)), ("LED1", 1, (5.2, 52.94))]
+            ("C1", 2, (10.9, 6.30)), ("LED1", 1, (5.2, 52.94)),
+            ("R15", 1, (21.55, 21.00))]      # Rev H: the enable pull-down's ground end
     for ref, num, xy in todo:
         p = pad(ref, num, net="GND")
         track("GND", [p, via("GND", xy)], 0.3)
     for xy in [(2.0, 25.0), (2.0, 40.0), (20.0, 58.5), (38.0, 25.0), (38.0, 10.0), (2.0, 10.0),
                (17.8, 38.0), (21.0, 36.5), (27.0, 26.5), (6.0, 40.0), (15.5, 41.0), (12.0, 41.0),
-               (34.0, 56.5), (24.0, 23.5), (11.0, 23.7), (34.5, 29.0)]:
+               (34.0, 58.6), (24.0, 23.5), (11.0, 23.7), (34.5, 29.0)]:
         via("GND", xy)
 
 
 def solid_power_grounds():
     """Loops close through these pads: no thermal spokes on them."""
-    for ref, num in (("C10", 2), ("C11", 2), ("U5", 2), ("R12", 2), ("D3", 2), ("D5", 2),
-                     ("C7", 2), ("C6", 2), ("Q1", 2), ("Q1", 4), ("D4", 2)):
+    for ref, num in (("C10", 2), ("C11", 2), ("U5", 2), ("R12", 2), ("D3", 2), ("D5", 2), ("D6", 1),
+                     ("C7", 2), ("C6", 2), ("Q1", 2), ("Q1", 4)):
         zone_connection(ref, num, pcbnew.ZONE_CONNECTION_FULL)
     # the module's centre pad and its thermal holes: solid into both pours
     zone_connection("U1", 41, pcbnew.ZONE_CONNECTION_FULL)
@@ -305,7 +317,7 @@ def solid_power_grounds():
 #: dropped: it can only be a duplicate (Freerouting does not count a track that
 #: ends inside a pad, off its centre, as connected; KiCad does).
 SCRIPTED_NETS = {"GND", "+5V", "+24V", "/VIN_SW", "/MT_SW", "/MT_FB", "/USB_P", "/USB_N", "/CC1", "/CC2",
-                 "/LOOP_C", "/LOOP_RTN", "/LOOP_SNS", "/LOOP_FB", "/LOOP_DRV", "/INA_INP", "/INA_INN",
+                 "/LOOP_C", "/LOOP_IN", "/LOOP_RTN", "/LOOP_SNS", "/LOOP_FB", "/LOOP_DRV", "/INA_INP", "/INA_INN",
                  "/INA_VBUS"}
 
 

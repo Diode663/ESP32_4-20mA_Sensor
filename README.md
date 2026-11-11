@@ -2,6 +2,25 @@
 
 Single-channel industrial 4-20mA current-loop reader, USB-C powered, built for ESPHome.
 
+## Rev H (branch `claude/rev-h-review`, 2026-11-11)
+
+Rev G is the board that was ordered; it is unchanged on `main`. This branch
+carries the changes that came out of an independent review of it
+(`docs/Design_Review_2026-11-11_independent.md`). The sections further down
+still describe Rev G except where they say Rev H.
+
+| Change | Why |
+|---|---|
+| **mA input: D5 SMAJ12A -> SMAJ28A, new F1 (100 mA / 60 V PPTC) in series, new D6 (1N4007W) across the shunt.** Nets: `LOOP_IN` terminal side, `LOOP_RTN` shunt side | D5 did not conduct until 13 V with the 3.32 ohm shunt in parallel: a 0.5 kV surge put 5 A / 91 W peak through an 0805, and 24 V wired to the mA pin put 7 A through it. Now the shunt sees D6's ~1 V and F1 opens (`sim/8_input_protection.py`). Cost: D6 steals 1 ppm of the reading at 25 C, 77 ppm at 85 C |
+| **R15 is a pull-down** | the loop supply stays off through reset, flashing and a hung firmware; ESPHome turns it on at boot. The same firmware runs on Rev G |
+| **Silkscreen legend**: J2 pinout (top, and on the bottom under each pin), RESET, BOOT, board name and revision | Rev G carried designators only |
+| **Routing by this board's own grid router** (`gridroute.py`), module supply scripted through C3 | 9 signal vias and 25 mm of track on the ground layer; Rev G's Freerouting result had 7 vias and 59 mm, with pin 2 fed through two vias |
+| **Terminal corner re-laid**: F1 where D3 was, D6 beside it, D3 upright at the row's east end, D4 in the strip right of the terminal, TP1 beside R20, third fiducial moved to the west edge | to fit two more parts; nothing live is within 2.6 mm of the corner mounting hole's centre |
+| **Schematic redrawn on A3**: every block wired (no connection made by label inside a block), functional symbols for J1, D1, U3, U4, U5 | Rev G's A2 sheet printed at half size and joined 20 connections by name |
+
+DRC: the same nine library-footprint items as Rev G, nothing unconnected,
+schematic parity clean. Not built or measured.
+
 ## Rev G at a glance (2026-09-20)
 
 Rev G is the result of a second, independent design review
@@ -107,14 +126,16 @@ across the span. Full procedure and the entity list are in
 
 ```
 esp32-4to20ma-board.kicad_pro     Project file
-esp32-4to20ma-board.kicad_sch     The schematic — one A2 sheet (generated)
+esp32-4to20ma-board.kicad_sch     The schematic — one A3 sheet in Rev H, A2 in Rev G (generated)
 schematic.pdf                     PDF of the schematic
 esp32-4to20ma-board.kicad_pcb     Board, 40x61mm portrait — placed and routed
 setup_fab.py                      Stackup, netclasses, board rules, .kicad_dru (run before routing)
 route_board.py                    Routes the board: scripted critical nets + replayed autoroute + pours
 routelib.py                       Routing library (from the kicad-pcb-placement skill): drawing, the
                                   Freerouting hand-off, replay, DRC and pour reports
-routing/autoroute.json            Freerouting's result, replayed by route_board.py
+routing/autoroute.json            Freerouting's result (Rev G), replayed with --freerouting
+gridroute.py                      Rev H: this board's own grid router (route_board.py --gridroute)
+routing/gridroute.json            Its result, replayed by route_board.py by default
 routing/drc.json                  The last full DRC report
 build_package.py                  Builds fab/: gerbers zip, BOM, CPL, order notes (DRC-gated)
 jlc_cpl.py, jlc_rotations.json    CPL exporter and this board's sourced rotation corrections
@@ -398,8 +419,9 @@ That still cannot solve the lower-right corner, which holds the limiter, the
 sense network, two TVS diodes and the terminal. `REF_PINS` in
 `place_components.py` places 18 designators by hand, each checked against DRC.
 
-Five test points (`TP1`-`TP5`, 1.0 mm bare pads) sit on `LOOP_V`, `LOOP_RTN`,
-`+24V`, `+3V3` and `MT_EN`. They are real schematic symbols - that is the only
+Five test points (`TP1`-`TP5`, 1.0 mm bare pads) sit on `LOOP_V`, `LOOP_RTN`
+(`LOOP_IN` in Rev H), `+24V`, `+3V3` and `MT_EN`. In Rev H TP1 is the bare pad
+beside R20 and carries no designator: there is no room for one. They are real schematic symbols - that is the only
 way they get a net - but carry `in_bom=False`. Until Rev G the *board* still
 held 1.5 mm pads: `pcblib` never propagated a footprint changed in the
 schematic. It does now, and `Board.drc()` runs with `--schematic-parity`.
@@ -502,6 +524,13 @@ also drop `MT_EN` on a sustained short; with the Rev G load switch that
 removes the supply entirely rather than leaving 4.6 V behind.
 
 ### Field protection
+
+**Rev H** keeps D3 and replaces the mA wire's single clamp with three parts:
+D5 (now SMAJ28A, so 24 V on that pin is inside its stand-off) at the terminal,
+F1 (100 mA hold, 60 V PPTC) in series, and D6 (1N4007W) across the shunt. A
+surge or a mis-wired 24 V supply then puts D6's forward drop across the shunt
+- 0.3 to 1 W peak for microseconds, or until F1 opens - where Rev G put
+91 W or 7 A (`sim/8_input_protection.py`). The rest of this section is Rev G.
 
 Each field wire has its own TVS **to ground**, within 6 mm of its terminal
 pin: D3 (SMAJ28A, clamps at 45 V) on `LOOP_V`, D5 (SMAJ12A, clamps under
@@ -648,7 +677,7 @@ Rev B used a root block diagram plus four sub-sheets. The old sheets are in
 - **Power in**: USB-C receptacle, data+power (no PD negotiation — plain 5V/500mA sink). CC1/CC2 have 5.1kΩ pulldowns per USB-C spec. USBLC6-2SC6 ESD-protects the D+/D- lines, wired straight through to the S3's native USB pins (IO19/IO20).
 - **Programming**: no bridge chip, no auto-reset transistors. Per Espressif's own ESP32-S3-WROOM-1 reference design, the chip's internal USB-Serial/JTAG Controller peripheral handles esptool's reset/bootloader-entry handshake directly over the native USB connection — GPIO0's default strapping (internal weak pull-up) plus GPIO46's default strapping (internal weak pull-down) already satisfy the "Joint Download Boot" condition, so esptool can flash and open a console with zero external reset circuitry. SW1 (RESET, EN→GND) and SW2 (BOOT, GPIO0→GND) are kept as manual fallback buttons, matching Espressif's reference.
 - **3.3V rail**: AP2112K-3.3 LDO (600mA), powers the ESP32-S3 and INA226.
-- **24V loop supply**: MT3608 boost converter, 5V→24V, fed through a soft-start load switch (Q3/Q4) and feeding the field terminal through a **constant-current limiter** (Q1/Q2, R16-R18, D4). `MT_EN` is held high by R15 (100k to 3.3V) and pulled low by IO10; it gates the load switch, so firmware can remove loop power entirely or power-cycle a stuck transmitter. L1 is 22µH. Feedback divider R10=390kΩ/R11=10kΩ gives exactly 0.6V×(1+39) = **24.00V**. Rated for far more than the 30mA the loop needs — this is the same MT3608 topology recommended in its own datasheet, just very lightly loaded here.
+- **24V loop supply**: MT3608 boost converter, 5V→24V, fed through a soft-start load switch (Q3/Q4) and feeding the field terminal through a **constant-current limiter** (Q1/Q2, R16-R18, D4). `MT_EN` is held high by R15 (100k to 3.3V) and pulled low by IO10 (Rev H: held LOW by R15 to GND and driven high by IO10); it gates the load switch, so firmware can remove loop power entirely or power-cycle a stuck transmitter. L1 is 22µH. Feedback divider R10=390kΩ/R11=10kΩ gives exactly 0.6V×(1+39) = **24.00V**. Rated for far more than the 30mA the loop needs — this is the same MT3608 topology recommended in its own datasheet, just very lightly loaded here.
 - **Current sensing**: INA226 (I2C, 16-bit, TI). Low-side shunt R12 = 3.32Ω 1% between the loop-return terminal and GND. The INA226's shunt input is fixed at ±81.92mV with no PGA, so the shunt alone sets the ceiling: 3.32Ω puts full scale at **24.67mA**, which reads a sensor driving 23.5mA over-range instead of clipping. 24mA gives 79.7mV (97% of range) and the 2.5µV LSB works out at 0.75µA — about 21,200 counts across the 4-20mA span, far beyond any transmitter's accuracy. (Rev C used 4.02Ω, which clipped at 20.4mA.) 10Ω series filter resistors (R13/R14) + a 100nF cap across the sense lines follow the INA226 datasheet's own recommended input-protection network (fig. 21) for exposed field wiring. INA226's VBUS pin reads the loop supply voltage as a diagnostic, tapped downstream of the limiter through **R20, a 10kΩ series resistor**: D3 clamps as high as 58.1V at its rated surge current, well past the INA226's 40V absolute maximum, and the pin is rated for only ±5mA. R20 holds the worst case to 1.8mA. It costs 1.19% of gain against the 830kΩ input impedance, which firmware corrects and which does not touch the current measurement.
 - **Field wiring**: 3-position one-piece push-in spring terminal, 5.00mm pitch (KEFA KF250NH-5.0-3P, 16–20 AWG) — **1 = GND, 2 = mA in, 3 = +24V out**, numbered left to right looking into the wire entry. A 2-wire transmitter goes on 3-2; a self-powered (sourcing) output on 2-1; a 3-wire sensor uses all three, within the ~30mA limit. Each field wire has its own TVS to ground (SMAJ28A / SMAJ12A).
 - **I2C**: GPIO8 (SDA) / GPIO9 (SCL), 4.7kΩ pull-ups — the conventional default I2C pins on ESP32-S3 boards.

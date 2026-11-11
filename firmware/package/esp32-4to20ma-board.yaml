@@ -28,8 +28,11 @@
 #   VBUS pin      reads LOOP_V through R20 = 10k into the INA226's 830k input
 #                 impedance, so the chip sees 830/840 of the truth -> x1.01205
 #   Loop power    MT_EN = GPIO10 (U1 pin 18). HIGH = loop supply ON.
-#                 R15 (100k to 3V3) holds it HIGH, so the loop is powered from
-#                 the instant 3V3 comes up, before ESPHome runs. See `switch:`.
+#                 Rev H: R15 (100k to GND) holds it LOW, so the loop is OFF
+#                 through reset, flashing and any hang, and comes on when this
+#                 firmware sets the pin (restore_mode below). Rev G boards
+#                 have R15 to 3V3 instead: there the loop is powered from the
+#                 instant 3V3 comes up. The same firmware suits both.
 #   Buttons       SW1 = EN (hardware reset, invisible to firmware)
 #                 SW2 = GPIO0 (strapping pin, free to read after boot)
 #   LED1          hardwired +3V3 -> R9 -> LED1. NOT controllable. There is no
@@ -538,11 +541,13 @@ switch:
   # the MT3608 boost. LOW removes the 24 V supply entirely -- with the Rev G
   # load switch there is no 4.6 V left behind.
   #
-  # NOTE: R15 is a 100k pull-up to 3V3, so from power-on until ESPHome
-  # configures this pin the loop is POWERED. That is fail-safe in the sense
-  # that the instrument still works with dead firmware, but it does mean
-  # firmware cannot guarantee the loop stays off across a reset.
-  # Do not treat this switch as a safety interlock.
+  # Rev H: R15 is a 100k pull-DOWN, so the loop is unpowered until ESPHome
+  # configures this pin, and ALWAYS_ON below is what turns it on at boot.
+  # Dead or hung firmware therefore means no loop supply (and no reading),
+  # not a live 24 V terminal that nothing is watching.
+  # Rev G: R15 is a pull-up, so the loop is powered from power-on and
+  # firmware cannot keep it off across a reset.
+  # Either way, do not treat this switch as a safety interlock.
   - platform: gpio
     pin: GPIO10
     id: loop_power

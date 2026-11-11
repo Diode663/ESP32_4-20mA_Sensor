@@ -70,7 +70,7 @@ PLACEMENT = {
     # --- Buttons below the module, pull-ups in the gap between them -------
     "SW1":  (10.50, 23.65, 0),     # RESET -> EN, up the left side
     "SW2":  (29.50, 23.65, 0),     # BOOT  -> IO0 (pin 27, lower right)
-    "R15":  (20.00, 21.00, 0),     # MT_EN pull-up directly under pin 18: its track drops straight in
+    "R15":  (20.00, 21.00, 180),   # MT_EN pull-DOWN (Rev H): MT_EN pad west under pin 18, GND pad east at its own via
     "R6":   (20.00, 23.50, 0),     # SCL pull-up below it, reached from the SCL run that passes on its way to U3
 
     # --- 3.3 V LDO: left, between the USB 5 V and its loads ---------------
@@ -111,7 +111,8 @@ PLACEMENT = {
     # copper and the three leads face the terminal. 0.85 W in a dead short:
     # pour LOOP_C generously around the tab and stitch it to the bottom layer.
     "Q1":   (35.80, 42.80, 90),
-    "D4":   (36.90, 49.00, 180),   # anode under Q1's collector lead, K on to J2
+    "D4":   (34.00, 52.60, 90),    # anode (LOOP_C) up, cathode (LOOP_V) down, in the strip right of the terminal
+                                   # (Rev H: it was in the row above the terminal, which F1 and D6 need)
 
     # --- Loop sense, laid out as the INA226 datasheet's Figure 30 ---------
     # U3 is turned so IN+/IN- leave on the side facing the shunt and meet the
@@ -127,9 +128,17 @@ PLACEMENT = {
     "C8":   (23.10, 46.70, 0),     # bypass: +3V3 pad under VS, GND pad beside it
     "R20":  (26.40, 45.80, 180),   # bus-pin series limit
 
-    # --- Field protection: one TVS per wire, each within 6 mm of its pin ---
-    "D3":   (30.10, 48.80, 180),   # LOOP_V  -> GND, cathode toward J2 pin 1
-    "D5":   (21.00, 48.80, 180),   # LOOP_RTN -> GND, cathode toward J2 pin 2
+    # --- Field protection (Rev H) -------------------------------------------
+    # The mA wire runs along one row above the terminal, in circuit order:
+    # D5 at the pin, the test pad, F1 in series, then D6 across the shunt's
+    # feed, which turns north to the shunt between F1 and D6. D3 (the +24 V
+    # wire's clamp) stands upright at the row's east end. Nothing here is
+    # within 2.6 mm of the centre of the corner mounting hole (36.5, 57.5): a
+    # 4.6 mm metal standoff there must not reach a live pad.
+    "D5":   (21.00, 48.80, 180),   # LOOP_IN -> GND at terminal pin 2
+    "F1":   (28.90, 48.80, 0),     # 1 (LOOP_IN) west toward TP2, 2 (LOOP_RTN) east
+    "D6":   (33.50, 48.80, 180),   # anode (LOOP_RTN) west at F1.2, cathode (GND) east
+    "D3":   (37.90, 51.00, 90),    # GND up, LOOP_V down beside D4's cathode
 
     # --- USB input and ESD: bottom left, short hop up to pins 13/14 -------
     "J1":   (11.50, 55.97, 0),     # mouth flush with the bottom edge; 0.5 mm left of
@@ -146,8 +155,8 @@ PLACEMENT = {
     "TP4":  (11.50, 35.00, 0),     # +3V3, at the LDO output beside C7
     "TP5":  (21.20, 26.00, 0),     # MT_EN, below R15's pull-up
     "TP3":  (23.20, 40.40, 0),     # +24V, beside D2's cathode
-    "TP1":  (37.00, 51.60, 0),     # LOOP_V, below D4
-    "TP2":  (25.55, 48.80, 0),     # LOOP_RTN, in the gap the return runs up
+    "TP1":  (28.45, 46.55, 0),     # LOOP_V, beside R20 where the bus-voltage tap takes it
+    "TP2":  (25.55, 48.80, 0),     # LOOP_IN, between D5 and F1
 
     # --- Field terminal: bottom right, one-piece push-in block -------------
     # Wire entry faces the bottom edge, its face 0.3 mm inside it. Left to
@@ -159,7 +168,7 @@ PLACEMENT = {
 #: Optical alignment targets, in an L so the assembler cannot mount the
 #: board rotated. 4 mm in from the edges, which is the closest JLCPCB will
 #: read (they ask for 3.85 mm) and as far apart as the parts allow.
-FIDUCIALS = [(4.00, 7.00), (36.00, 7.00), (36.00, 54.00)]
+FIDUCIALS = [(4.00, 7.00), (36.00, 7.00), (4.00, 42.30)]   # the third was at (36, 54), where D3 is now
 
 #: M2 clearance holes. The bottom pair sit 3.5 mm in from the corners, by the
 #: connectors, where the plugging forces are. The top pair used to be in the
@@ -195,13 +204,38 @@ REF_PINS = {
     "R22": (13.50, 30.95, 0),      # the load-switch stack reads down its left side
     "R21": (13.50, 32.10, 0),
     "C12": (13.50, 33.25, 0),
-    "D4":  (34.05, 49.00, 90),
+    "D4":  (34.00, 55.95, 0),      # below it; the gap between it and D3 is 0.05 mm too narrow
+    "J2":  (17.10, 56.50, 90),     # upright in the gap left of the terminal (Rev G had it on the right, where D3/D4 are now)
+    "D6":  (31.70, 47.00, 0),      # above its outline's open end, left of Q1's base lead
+    "F1":  (28.90, 48.80, 90),     # on the body, between the pads: no clear strip beside it
     "R17": (31.85, 37.60, 90),
     "R18": (37.20, 37.55, 0),
     "C3":  (9.20, 1.31, 0),        # left of its ground via; beside it the designator ran into R1's
     "R11": (32.70, 34.60, 0),      # east of the divider, over the masked +24V track
     "R10": (32.70, 35.72, 0),
 }
+
+#: Silkscreen legend (Rev H; Rev G carried designators only). What the person
+#: wiring or flashing the board needs: the terminal's pinout, which button is
+#: which, and the name and revision.
+#: J2's wire entry faces the board edge and its body covers the board there,
+#: so its pinout is in the open area on the left and again on the BOTTOM
+#: under each pin, where the wires and solder joints can be seen together.
+LEGEND = [
+    # (text, x, y, layer, justify, angle, height)
+    ("ESP32", 0.90, 36.00, "F.SilkS", "left", 0, 1.0),
+    ("4-20mA", 0.90, 37.50, "F.SilkS", "left", 0, 1.0),
+    ("Rev H", 0.90, 39.00, "F.SilkS", "left", 0, 1.0),
+    ("J2 1 GND", 5.20, 41.10, "F.SilkS", "left", 0, 0.8),
+    ("J2 2 mA IN", 5.20, 42.30, "F.SilkS", "left", 0, 0.8),
+    ("J2 3 +24V", 5.20, 43.50, "F.SilkS", "left", 0, 0.8),
+    ("RESET", 3.40, 23.65, "F.SilkS", "center", 90, 1.0),     # upright, left of SW1
+    ("BOOT", 37.40, 26.00, "F.SilkS", "center", 0, 1.0),      # under SW2's designator
+    ("GND", 20.50, 52.20, "B.SilkS", "center", 0, 1.0),
+    ("mA IN", 25.50, 52.20, "B.SilkS", "center", 0, 1.0),
+    ("+24V", 30.50, 52.20, "B.SilkS", "center", 0, 1.0),
+    ("ESP32 4-20mA  Rev H", 20.00, 30.00, "B.SilkS", "center", 0, 1.0),
+]
 
 # Nets whose length this layout is supposed to be protecting.
 CRITICAL = ["/MT_SW", "/VIN_SW", "/INA_INP", "/INA_INN", "/LOOP_RTN", "/LOOP_C",
@@ -223,16 +257,21 @@ def main():
     for x, y in FIDUCIALS:
         b.fiducial(x, y)
     b.link_schematic()             # symbol UUIDs and pad nets
-    b.tidy_references()
+    # TP1 sits in the 1 mm strip between R20 and F1 with no room for a
+    # designator; it is the bare pad beside R20 (see the README's test points)
+    b.tidy_references(hide=("TP1",))
     for ref, (x, y, angle) in REF_PINS.items():
         t = b.fps[ref].Reference()
         t.SetTextAngleDegrees(angle)
         t.SetPosition(b.pt(x, y))
+    for text, x, y, layer, justify, angle, size in LEGEND:
+        b.text(text, x, y, size=size, angle=angle, layer=layer, justify=justify)
     b.check()                      # aborts on overlaps and unplaced parts
     b.save(force="--force" in sys.argv)
     b.drc()
     b.report_nets(CRITICAL)
-    b.render(os.path.join(HERE, "render"))
+    if "--no-render" not in sys.argv:      # the ray-traced view takes minutes once the board has copper
+        b.render(os.path.join(HERE, "render"))
 
 
 if __name__ == "__main__":

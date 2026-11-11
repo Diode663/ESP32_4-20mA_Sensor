@@ -96,17 +96,17 @@
   "visible": true
  },
  "D3": {
-  "angle": 180.0,
-  "dx": -3.475,
-  "dy": -2.556,
+  "angle": 270.0,
+  "dx": -4.456,
+  "dy": -0.0,
   "flipped": false,
   "pinned": false,
   "visible": true
  },
  "D4": {
   "angle": 270.0,
-  "dx": 2.375,
-  "dy": -4.451,
+  "dx": -3.401,
+  "dy": 0.0,
   "flipped": false,
   "pinned": false,
   "visible": true
@@ -115,6 +115,22 @@
   "angle": 180.0,
   "dx": 4.651,
   "dy": -0.0,
+  "flipped": false,
+  "pinned": false,
+  "visible": true
+ },
+ "D6": {
+  "angle": 180.0,
+  "dx": -2.27,
+  "dy": 2.156,
+  "flipped": false,
+  "pinned": false,
+  "visible": true
+ },
+ "F1": {
+  "angle": 90.0,
+  "dx": 2.305,
+  "dy": -2.274,
   "flipped": false,
   "pinned": false,
   "visible": true
@@ -129,7 +145,7 @@
  },
  "J2": {
   "angle": 0.0,
-  "dx": 8.036,
+  "dx": -8.571,
   "dy": 0.718,
   "flipped": false,
   "pinned": false,
@@ -225,16 +241,16 @@
  },
  "R14": {
   "angle": 270.0,
-  "dx": -1.936,
-  "dy": 0.0,
+  "dx": 0.955,
+  "dy": -3.452,
   "flipped": false,
   "pinned": false,
   "visible": true
  },
  "R15": {
-  "angle": 0.0,
-  "dx": -2.512,
-  "dy": 0.0,
+  "angle": 180.0,
+  "dx": 2.512,
+  "dy": -0.0,
   "flipped": false,
   "pinned": false,
   "visible": true
@@ -321,8 +337,8 @@
  },
  "R9": {
   "angle": 270.0,
-  "dx": 1.936,
-  "dy": -0.0,
+  "dx": -1.936,
+  "dy": 0.0,
   "flipped": false,
   "pinned": false,
   "visible": true
@@ -345,11 +361,11 @@
  },
  "TP1": {
   "angle": 0.0,
-  "dx": 1.025,
-  "dy": 2.006,
+  "dx": 0.0,
+  "dy": -1.448,
   "flipped": false,
   "pinned": false,
-  "visible": true
+  "visible": false
  },
  "TP2": {
   "angle": 0.0,

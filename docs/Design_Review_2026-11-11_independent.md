@@ -41,6 +41,37 @@ Nothing stops them being used. Two hand reworks are worth doing before field use
 At bring-up: scope VIN_SW at enable (6); watch for brown-out resets during Wi-Fi transmit (4);
 label J2 by hand (5).
 
+## Rev H, as built on this branch
+
+The owner's decisions (2026-11-11): fix the mA input's protection, default the
+loop supply off, add a legend, keep the placement and route with the board's
+own router, and build the schematic findings into the drawing skill.
+
+| Finding | What was done |
+|---|---|
+| 1, 2 | **D5 -> SMAJ28A (`C353458`), F1 100 mA / 60 V PPTC (`C70065`) in series, D6 1N4007W (`C7528871`) across the shunt.** A 5 V TVS at the pin was the first idea and fixes only finding 1: it conducts at 6.4 V, so 24 V on the pin would destroy it. Clamping at the pin above 24 V, limiting with a fuse, and clamping again at the shunt covers both. Simulated: surge 0.3-1.0 W peak in the shunt (was 91-139 W); 24 V on the pin 0.26-0.65 W until F1 opens (was 7 A). D6 takes 1 ppm of the reading at 25 C, 14 ppm at 60 C, 77 ppm at 85 C |
+| 3 | R15 to ground. Firmware unchanged (`restore_mode: ALWAYS_ON` turns the loop on at boot); comments updated |
+| 4 | C3 on the feed, scripted, no via (already on the branch) |
+| 5 | Legend: J2 pinout top and bottom, RESET, BOOT, name and revision |
+| 6-9 | Not changed. Scope VIN_SW at first enable on a Rev G board |
+
+Board: F1 and D6 needed the row above the terminal, so D4 moved into the strip
+right of it, D3 stands upright at the row's east end, TP1 sits beside R20 and
+the third fiducial moved to the west edge. An earlier arrangement put D3's
+live pad 1.6 mm from the centre of the corner mounting hole, under where a
+standoff sits; the one kept has nothing within 2.6 mm. Routed by the board's
+own router: 0 unconnected, parity clean, DRC the same nine library-footprint
+items as Rev G, 9 signal vias, 24.8 mm of track on the ground layer, bottom
+ground in one piece. LOOP_V reaches R20 on a 0.3 mm track under F1, between its
+pads (0.6 mm to each).
+
+Stock on 2026-11-11: F1 991 k, D6 807 k, D5 8.6 k. Rotation corrections for
+the new parts are zero by pad comparison; like the rest they have not been
+seen in JLCPCB's placement preview.
+
+Not done: nothing here has been built or measured; `fab/` is rebuilt for Rev H
+but not ordered.
+
 ## Routing with this board's own router
 
 `gridroute.py` (about 600 lines) replaces Freerouting for the ten nets that are not scripted:
@@ -70,6 +101,9 @@ Measured on the Rev G sheet: 52 parts on A2; **20 connections inside a block mad
 instead of wire** (boost 4 nets, limiter 3, loop measurement 3, USB 4); block area would fit A3.
 The limiter was the worst: six parts, three of them joined only by name.
 
-On the branch the limiter and the boost converter are redrawn as a person would — one rail left
-to right, every connection a wire, names only naming nets. Same netlist, zero crossings, label
-joins 20 → 11. The rest of the sheet is as it was.
+On the branch every block is redrawn as a person would — one rail left to right, every
+connection a wire, names only naming nets — on five functional symbols (J1, D1, U3, U4, U5:
+pins by function, duplicate contacts stacked). Label joins 20 → 0, no crossings, `pin_to_pin`
+ERC warnings 59 → 26, and the page is composed rather than flowed: A3 at 93 % x 98 % instead
+of A2. The drawing library gained the checks and tools that did it (`label_joins`,
+`functional_symbol`, `arrange(layout=...)`, the print-size note).

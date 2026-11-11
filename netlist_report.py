@@ -15,12 +15,18 @@ GND_NET = "GND"
 POWER_NETS = {"GND", "+3V3", "+5V", "+24V"}
 
 _d = g.Design(g.PROJDIR, "esp32-4to20ma-board")
+g.functional_symbols(_d)            # the redrawn symbols: their pins are what the sheet uses
 LIB = _d.lib
 
+# which block of the one sheet each part is drawn in
 SECTION_OF = {}
-for _fn, _c, _r, _head in g.SECTIONS:
-    name = _head.split("  -")[0].strip().title()
-    for _s in _fn(_d).symbols:
+_sheet = _d.sheet(g.ROOT_FILE, "report", paper="auto")
+for _fn in g.BUILDERS:
+    _fn(_sheet)
+for _b in _sheet.blocks:
+    name = (_b["title"] or "").split("  -")[0].strip().title()
+    _a, _z = _sheet._slices(_b)["symbols"]
+    for _s in _sheet.symbols[_a:_z]:
         if _s["ref"]:
             SECTION_OF[_s["ref"]] = name
 
@@ -32,7 +38,7 @@ NC = set(map(tuple, g.NO_CONNECT))
 
 
 def pins(ref):
-    return LIB.get(g.PARTS[ref][0]).pins(1)
+    return LIB.get(g.FUNC.get(ref, g.PARTS[ref][0])).pins(1)
 
 
 def pin_name(ref, num):
@@ -56,14 +62,14 @@ w("=" * 78)
 w("")
 w("SECTION 1 -- COMPONENTS")
 w("")
-w(f"{'Ref':6s} {'Schematic block':18s} {'Value':22s} {'LCSC':10s} {'MPN'}")
+w(f"{'Ref':6s} {'Schematic block':36s} {'Value':22s} {'LCSC':10s} {'MPN'}")
 w("-" * 78)
 for ref in sorted(g.PARTS, key=refkey):
     lib_id, value, _fp, lcsc, _mfr, mpn = g.PARTS[ref]
     # test points are bare copper: no LCSC number and nothing to order
     lcsc = lcsc or "--"
     mpn = mpn or "(test point, not in BOM)"
-    w(f"{ref:6s} {SECTION_OF.get(ref, '?'):18s} {value:22s} {lcsc:10s} {mpn}")
+    w(f"{ref:6s} {SECTION_OF.get(ref, '?'):36s} {value:22s} {lcsc:10s} {mpn}")
 
 w("")
 w("")
