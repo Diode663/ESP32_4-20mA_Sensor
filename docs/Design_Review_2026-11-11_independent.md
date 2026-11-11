@@ -43,7 +43,7 @@ label J2 by hand (5).
 
 ## Routing with this board's own router
 
-`gridroute.py` (about 500 lines) replaces Freerouting for the ten nets that are not scripted:
+`gridroute.py` (about 600 lines) replaces Freerouting for the ten nets that are not scripted:
 a 0.1 mm grid, analytic clearance, A* with 45° headings, tree growth for multi-pin nets,
 rip-up and retry, several net orders tried and the cheapest kept. KiCad's DRC found no
 clearance error in anything it produced.
