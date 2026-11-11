@@ -132,10 +132,19 @@ def route_3v3():
     c7, tp4 = pad("C7", 1, (11.50, 32.78), "+3V3"), pad("TP4", 1, (11.50, 35.00), "+3V3")
     track("+3V3", [u45, (7.05, 29.4), (10.30, 29.4), (10.30, 32.78), c7, tp4], 0.5)
     c2, r5 = pad("C2", 1, (8.35, 8.80), "+3V3"), pad("R5", 1, (8.99, 14.90), "+3V3")
-    r1, c3 = pad("R1", 1, (8.99, 4.30), "+3V3"), pad("C3", 1, (9.02, 2.30), "+3V3")
+    r1, c3 = pad("R1", 1, (8.99, 4.30), "+3V3"), pad("C3", 1, (11.50, 2.27), "+3V3")
+    u12 = pad("U1", 2, (13.10, 2.27), "+3V3")
     track("+3V3", [(7.05, 29.4), (8.00, 28.45), (8.00, 9.5), c2], 0.5)
     track("+3V3", [(8.00, 14.90), r5], 0.3)
-    track("+3V3", [c2, (8.00, 8.1), (8.00, 3.0), (8.70, 2.30), c3], 0.4)
+    # The module's supply: bulk capacitor C2 on the trunk, then straight along
+    # y = 2.27 through C3's pad into pin 2, top layer, 0.5 mm, no via. (Rev G's
+    # autorouted feed went through two vias and 7 mm of bottom track under the
+    # module, with C3 off to one side.)
+    track("+3V3", [c2, (8.00, 8.1), (8.00, 2.95), (8.68, 2.27), c3, u12], 0.5)
+    # C3's ground: into module pin 1 beside it, and its own via to the plane
+    c3g, u11 = pad("C3", 2, (11.50, 1.31), "GND"), pad("U1", 1, (13.10, 1.00), "GND")
+    track("GND", [c3g, (11.81, 1.00), u11], 0.4)
+    track("GND", [c3g, via("GND", (10.45, 1.31))], 0.3)
     track("+3V3", [(8.00, 4.80), (8.50, 4.30), r1], 0.3)
 
 
@@ -256,12 +265,7 @@ def route_sense():
     track("GND", [c82, (24.20, 46.08), g], 0.25)
     track("GND", [pad("U3", 1, (18.39, 43.50), "GND"), pad("U3", 2, (18.39, 44.00), "GND")], 0.25)
     track("GND", [pad("U3", 1), via("GND", (18.39, 42.55))], 0.25)
-    # I2C lands on the west side as a pair: SDA inside, SCL outside, which is the
-    # order pins 4 and 5 want. Left to itself the autorouter wraps SCL round the
-    # corner first and boxes SDA in. It picks these two stubs up at their top ends.
-    u4, u5 = pad("U3", 4, (18.39, 45.00), "/I2C_SDA"), pad("U3", 5, (18.39, 45.50), "/I2C_SCL")
-    track("/I2C_SDA", [u4, (17.20, 45.00), (16.75, 44.55), (16.75, 38.0)], 0.2)
-    track("/I2C_SCL", [u5, (17.00, 45.50), (16.30, 44.80), (16.30, 38.0)], 0.2)
+
 
 
 # ---------------------------------------------------------------------------
@@ -271,7 +275,7 @@ def route_ground():
     """One via beside each ground pad that the top pour alone would leave on a
     long or thin path, then stitching so the two pours act as one."""
     todo = [("C7", 2, (11.50, 30.30)), ("U4", 2, (8.00, 34.05)), ("C6", 2, (4.50, 30.60)),
-            ("Q4", 2, (19.85, 27.65)), ("C2", 2, (10.25, 10.3)), ("C3", 2, (10.9, 2.30)),
+            ("Q4", 2, (19.85, 27.65)), ("C2", 2, (10.25, 10.3)),
             ("C1", 2, (10.9, 6.30)), ("LED1", 1, (5.2, 52.94))]
     for ref, num, xy in todo:
         p = pad(ref, num, net="GND")
@@ -289,6 +293,12 @@ def solid_power_grounds():
         zone_connection(ref, num, pcbnew.ZONE_CONNECTION_FULL)
     # the module's centre pad and its thermal holes: solid into both pours
     zone_connection("U1", 41, pcbnew.ZONE_CONNECTION_FULL)
+    zone_connection("U1", 1, pcbnew.ZONE_CONNECTION_FULL)     # corner pad: one spoke at best, and C3 returns here
+    # the buttons' ground pads: signal tracks pass close on both sides, which
+    # can leave a thermal with one spoke; they are reflowed, so solid is fine
+    for ref in ("SW1", "SW2"):
+        for num in (2, 4):
+            zone_connection(ref, num, pcbnew.ZONE_CONNECTION_FULL)
 
 
 #: Nets this script routes completely. Whatever an autorouter adds to them is
@@ -297,6 +307,75 @@ def solid_power_grounds():
 SCRIPTED_NETS = {"GND", "+5V", "+24V", "/VIN_SW", "/MT_SW", "/MT_FB", "/USB_P", "/USB_N", "/CC1", "/CC2",
                  "/LOOP_C", "/LOOP_RTN", "/LOOP_SNS", "/LOOP_FB", "/LOOP_DRV", "/INA_INP", "/INA_INN",
                  "/INA_VBUS"}
+
+
+# ---------------------------------------------------------------------------
+# The rest: this board's own grid router (gridroute.py)
+# ---------------------------------------------------------------------------
+GRID_JSON = os.path.join(HERE, "routing", "gridroute.json")
+
+#: (net, track width), in the order they are first tried: the short local nets,
+#: then power, then the long signals. Rip-up and retry reorders as needed.
+GRID_NETS = [("/SW_GATE", 0.2), ("/SW_PD", 0.2), ("/LED_A", 0.2), ("+3V3", 0.3),
+             ("/I2C_SDA", 0.2), ("/I2C_SCL", 0.2), ("/MT_EN", 0.2), ("/EN", 0.2), ("/IO0", 0.2),
+             ("/LOOP_V", 0.3)]
+
+#: (layer or None for both, x0, y0, x1, y1, cost multiplier): where copper should
+#: stay away. Layer 1 is the bottom, which is the ground plane everywhere.
+GRID_REGIONS = [
+    (1, 12.4, 0.0, 31.7, 19.7, 3.0),      # under the radio module
+    (0, 13.9, 1.0, 30.2, 18.2, 1.5),      # top layer under the module body
+    (1, 12.3, 16.0, 13.7, 46.0, 2.0),     # under the USB pair: cross it square, never run along it
+    (1, 10.0, 44.0, 13.6, 54.0, 3.0),     # under the USB entry
+    (1, 21.0, 28.0, 34.5, 41.5, 6.0),     # under the boost converter
+    (1, 17.5, 41.5, 32.0, 47.5, 4.0),     # under the INA226 and the shunt
+    (None, 21.4, 29.9, 26.1, 34.9, 3.0),  # under the inductor
+]
+#: no via may be drilled here: under the module, under the inductor
+GRID_NOVIA = [(12.3, 0.0, 31.8, 19.8), (21.4, 29.9, 26.1, 34.9)]
+#: (net pattern, aggressor pattern, extra clearance in mm)
+GRID_SHY = [("/I2C_*", "/MT_SW", 0.8), ("/EN", "/MT_SW", 0.8), ("/MT_EN", "/MT_SW", 0.5)]
+
+
+def grid_route():
+    import json
+    import time
+    from gridroute import GridRouter
+    t0 = time.time()
+    # The order nets are tried in matters to any sequential router, so several
+    # are tried and the cheapest board kept: the given order, longest first,
+    # and seeded shuffles. Same seeds every run, so the result is repeatable.
+    import random
+    orders = [list(GRID_NETS), sorted(GRID_NETS, key=lambda n: GRID_NETS.index(n) if n[0] == "+3V3" else 99)]
+    rnd = random.Random(20261111)
+    for _ in range(int(os.environ.get("GRID_ORDERS", "6")) - len(orders)):
+        o = list(GRID_NETS)
+        rnd.shuffle(o)
+        orders.append(o)
+    best = None
+    for k, order in enumerate(orders):
+        g = GridRouter(r.board, os.path.join(HERE, NAME + ".kicad_pro"), size=(W, H),
+                       regions=GRID_REGIONS, shy=GRID_SHY, novia=GRID_NOVIA, quiet=True)
+        cost, failed = g.route_all(order)
+        s_ = g.stats()
+        score = sum(cost.values()) + 1000.0 * len(failed)
+        print("   order %d: score %7.1f  top %5.1f mm  bottom %5.1f mm  vias %2d%s   (%s first)" % (
+            k + 1, score, sum(d["top"] for d in s_.values()), sum(d["bottom"] for d in s_.values()),
+            sum(d["vias"] for d in s_.values()), "  FAILED " + ",".join(failed) if failed else "", order[0][0]), flush=True)
+        if best is None or score < best[0]:
+            best = (score, g, cost, failed)
+    _score, gr, cost, failed = best
+    st = gr.stats()
+    print("grid router: %d net(s) in %.0f s%s" % (len(cost), time.time() - t0,
+                                                   "; FAILED: " + ", ".join(failed) if failed else ""))
+    for net, _w in GRID_NETS:
+        d = st.get(net)
+        if d:
+            print("   %-10s top %5.1f mm  bottom %5.1f mm  vias %d" % (net, d["top"], d["bottom"], d["vias"]))
+    print("   total      top %5.1f mm  bottom %5.1f mm  vias %d" % (
+        sum(d["top"] for d in st.values()), sum(d["bottom"] for d in st.values()), sum(d["vias"] for d in st.values())))
+    os.makedirs(os.path.dirname(GRID_JSON), exist_ok=True)
+    json.dump({"tool": "gridroute.py", "items": gr.items()}, open(GRID_JSON, "w", encoding="utf-8"), indent=0)
 
 
 def main():
@@ -319,6 +398,10 @@ def main():
     zone("GND", B, "GND bottom")        # plane and leaves it alone; filled after its tracks are in
     r.normalise()
     scripted = r.count()
+    if "--gridroute" in sys.argv:
+        grid_route()
+    if os.path.exists(GRID_JSON) and "--freerouting" not in sys.argv:
+        r.auto_json = GRID_JSON         # replay this board's own router, not Freerouting
     if "--autoroute" in sys.argv:
         r.autoroute(SCRIPTED_NETS, passes=int(os.environ.get("FREEROUTING_PASSES", "30")),
                     best_of=int(os.environ.get("FREEROUTING_BEST_OF", "1")))

@@ -40,9 +40,9 @@
   "visible": true
  },
  "C3": {
-  "angle": 0.0,
-  "dx": -2.111,
-  "dy": 0.0,
+  "angle": 270.0,
+  "dx": -0.0,
+  "dy": -1.661,
   "flipped": false,
   "pinned": false,
   "visible": true
@@ -185,8 +185,8 @@
  },
  "R1": {
   "angle": 0.0,
-  "dx": -2.131,
-  "dy": 0.0,
+  "dx": 0.0,
+  "dy": -1.476,
   "flipped": false,
   "pinned": false,
   "visible": true

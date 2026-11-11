@@ -496,116 +496,99 @@ def build_boost(s):
     # 5 V -> 24 V @ 30 mA for the 2-wire 4-20 mA transmitter
     s.block_start("24 V BOOST CONVERTER  -  soft-start load switch, MT3608, feedback")
 
-    put(s, "U5", 152.4, 91.44, 180)
-    put(s, "L1", 127.0, 76.2)
-    put(s, "D2", 177.8, 76.2, 180)
-    put(s, "C10", 105.41, 83.82)
-    put(s, "C11", 213.36, 83.82)   # clear of R10 side text
-    put(s, "R10", 198.12, 88.9)
-    put(s, "R11", 198.12, 102.87)
-
-    # ---- 5 V input --------------------------------------------------------
-    s.wire((105.41, 76.2), s.pin("L1", "1"))
-    s.wire((114.3, 76.2), (114.3, 69.85))
-    s.label("VIN_SW", 114.3, 69.85, 90)
-    s.wire(s.pin("C10", "1"), (105.41, 76.2))
-    s.wire(s.pin("C10", "2"), (105.41, 93.98))
-    s.gnd(105.41, 93.98)
-
-    s.wire(s.pin("U5", "5"), (132.08, 91.44), (132.08, 85.09))
-    s.label("VIN_SW", 132.08, 85.09, 90)
-    s.nc("U5", "6")
-
-    # ---- Enable: pulled up to 3.3 V, driven low by the MCU to kill the loop.
-    # MT_EN no longer reaches U5 -- it gates the load switch, and U5's own EN
-    # rides on its switched input, the datasheet's automatic-start-up hookup.
-    put(s, "R15", 120.65, 95.25)
-    s.wire(s.pin("R15", "1"), (120.65, 87.63))
-    s.power("+3V3", 120.65, 87.63)
-    s.wire(s.pin("R15", "2"), (120.65, 102.87), (116.84, 102.87))
-    s.label("MT_EN", 116.84, 102.87, 180)
-    # EN is the top pin of this flank, so it leaves upward: going down would
-    # cross the VIN wire, and going straight left would put the label text
-    # on top of it.
-    s.wire(s.pin("U5", "4"), (139.7, 88.9), (139.7, 78.74))
-    s.label("VIN_SW", 139.7, 78.74, 180)
+    # One power path, left to right along one rail, as a datasheet draws a
+    # boost: +5 V in, the load switch, the input capacitor, the inductor, the
+    # switch node, the rectifier, the output capacitor, +24 V out. The
+    # controller hangs under the inductor with IN/EN up to its input side and
+    # SW up to its output side; the feedback divider hangs off the output and
+    # is wired back to FB. Net names name nets; nothing is joined by label.
+    Y = 76.2
 
     # ---- Soft-start load switch ------------------------------------------
     # Q3 sits between VBUS and everything the boost hangs on it (C10, and C11
     # through L1/D2, which a boost cannot disconnect). C12 is gate-to-SOURCE so
     # the gate follows VBUS up at plug-in and Q3 stays off through the edge;
     # a gate-to-drain capacitor does the opposite (sim/7_usb_inrush.py).
-    X = -15.24
-    put(s, "Q3", 66.04 + X, 66.04, 270, mirror="x")   # S left, D right, G down (KiCad's canonical form)
-    put(s, "R21", 58.42 + X, 76.2, 90)
-    put(s, "C12", 58.42 + X, 83.82, 90)
-    put(s, "R22", 76.2 + X, 76.2, 90)
-    put(s, "Q4", 88.9 + X, 83.82)
-    sx, sy = s.pin("Q3", "2"); dx, dy = s.pin("Q3", "3"); gx, gy = s.pin("Q3", "1")
-    s.wire((50.8 + X, 55.88), (50.8 + X, 83.82))
-    s.power("+5V", 50.8 + X, 55.88)
-    s.wire((50.8 + X, sy), (sx, sy))
-    s.wire((dx, dy), (86.36 + X, dy))
-    s.label("VIN_SW", 86.36 + X, dy)
-    s.wire((81.28 + X, dy), (81.28 + X, dy - 5.08))
-    s.power("PWR_FLAG", 81.28 + X, dy - 5.08)
-    s.wire((gx, gy), (gx, 83.82))
-    s.wire((50.8 + X, 76.2), s.pin("R21", "1"))
-    s.wire(s.pin("R21", "2"), (gx, 76.2))
-    s.wire((50.8 + X, 83.82), s.pin("C12", "1"))
-    s.wire(s.pin("C12", "2"), (gx, 83.82))
-    s.label("SW_GATE", gx, 73.66, 0)
-    s.wire((gx, 76.2), s.pin("R22", "1"))
-    qd = s.pin("Q4", "3"); qs = s.pin("Q4", "2"); qg = s.pin("Q4", "1")
-    s.wire(s.pin("R22", "2"), (qd[0], 76.2), qd)
-    s.label("SW_PD", s.pin("R22", "2")[0], 76.2)
-    s.wire(qs, (qs[0], 91.44))
-    s.gnd(qs[0], 91.44)
-    s.wire(qg, (qg[0], 93.98), (71.12 + X, 93.98))
-    s.label("MT_EN", 71.12 + X, 93.98, 180)
-    s.note("R21/R22 leave Vgs at -4.0 V; C12 x (R21 || R22) = 8 ms.", 43.18 + X, 101.6, 1.0)
-    s.note("VBUS sees 1 uF at attach, not 27 uF (USB limit 10 uF),", 43.18 + X, 104.14, 1.0)
-    s.note("and MT_EN low now truly disconnects the loop supply.", 43.18 + X, 106.68, 1.0)
+    put(s, "Q3", 73.66, Y + 2.54, 270, mirror="x")   # S left, D right, G down
+    put(s, "R21", 50.8, 81.28)                       # source to gate
+    put(s, "C12", 58.42, 81.28)                      # source to gate
+    put(s, "R22", 50.8, 95.25)                       # gate down to Q4
+    put(s, "Q4", 48.26, 109.22)                      # D up, S down, G left
+    put(s, "R15", 39.37, 102.87)                     # MT_EN pull-up: on by default
+    s.power("+5V", 45.72, 71.12)
+    s.wire((45.72, 71.12), (45.72, Y), s.pin("Q3", "2"))
+    s.wire((50.8, Y), s.pin("R21", "1"))
+    s.wire((58.42, Y), s.pin("C12", "1"))
+    gx, gy = s.pin("Q3", "1")
+    s.wire(s.pin("R21", "2"), (50.8, 88.9), (gx, 88.9), (gx, gy))
+    s.wire(s.pin("C12", "2"), (58.42, 88.9))
+    s.label("SW_GATE", 60.96, 88.9)
+    s.wire((50.8, 88.9), s.pin("R22", "1"))
+    s.wire(s.pin("R22", "2"), s.pin("Q4", "3"))
+    s.label("SW_PD", 50.8, 101.6)
+    s.wire(s.pin("Q4", "2"), (50.8, 116.84))
+    s.gnd(50.8, 116.84)
+    # Enable: pulled up to 3.3 V, driven low by the MCU to kill the loop. It
+    # gates the load switch; U5's own EN rides on its switched input.
+    s.wire(s.pin("Q4", "1"), (34.29, 109.22))
+    s.label("MT_EN", 34.29, 109.22, 180)
+    s.wire(s.pin("R15", "2"), (39.37, 109.22))
+    s.wire(s.pin("R15", "1"), (39.37, 96.52))
+    s.power("+3V3", 39.37, 96.52)
+    s.note("R21/R22 leave Vgs at -4.0 V; C12 x (R21 || R22) = 8 ms.", 60.96, 99.06, 1.0)
+    s.note("VBUS sees 1 uF at attach, not 27 uF (USB limit 10 uF),", 60.96, 101.6, 1.0)
+    s.note("and MT_EN low truly disconnects the loop supply.", 60.96, 104.14, 1.0)
 
-    # ---- Switch node, ground and feedback --------------------------------
-    # SW, GND and FB all leave the same flank of U5 in the order FB / GND / SW,
-    # with GND in the middle heading down. Wiring SW up to the switch node and
-    # FB across to the divider would cross GND both times, so SW and FB
-    # leave as short labelled stubs and only GND is a real wire. No crossings.
+    # ---- Input rail, inductor, switch node --------------------------------
+    put(s, "C10", 101.6, 83.82)
+    put(s, "L1", 124.46, Y)
+    put(s, "U5", 121.92, 96.52, 0, mirror="y")       # IN/EN left, SW/GND/FB right
+    put(s, "D2", 152.4, Y, 180)
+    s.wire(s.pin("Q3", "3"), s.pin("L1", "1"))
+    s.wire((83.82, Y), (83.82, Y - 5.08))
+    s.power("PWR_FLAG", 83.82, Y - 5.08)
+    s.label("VIN_SW", 86.36, Y)
+    s.wire((101.6, Y), s.pin("C10", "1"))
+    s.wire(s.pin("C10", "2"), (101.6, 90.17))
+    s.gnd(101.6, 90.17)
+    # IN and EN both come up to the input rail, on the supply side of L1
+    s.wire(s.pin("U5", "4"), (109.22, 99.06), (109.22, Y))
+    s.wire(s.pin("U5", "5"), (109.22, 96.52))
+    s.nc("U5", "6")
     s.wire(s.pin("L1", "2"), s.pin("D2", "2"))
-    s.label("MT_SW", 160.02, 76.2)
-    s.stub("U5", "1", 2.54, label="MT_SW")
-    s.stub("U5", "3", 2.54, label="MT_FB")
-    s.wire(s.pin("U5", "2"), (175.26, 91.44), (175.26, 101.6))
-    s.gnd(175.26, 101.6)
+    s.label("MT_SW", 139.7, Y)
+    s.wire(s.pin("U5", "1"), (137.16, 93.98), (137.16, Y))
+    # GND is the middle pin of that flank: it ends in a port between SW going
+    # up and FB going down, so none of the three crosses another
+    s.wire(s.pin("U5", "2"), (142.24, 96.52), (142.24, 99.06))
+    s.gnd(142.24, 99.06)
 
-    # ---- Feedback divider: Vout = 0.6 x (1 + R10/R11) ---------------------
+    # ---- 24 V output and the feedback divider ------------------------------
+    put(s, "R10", 167.64, 83.82)
+    put(s, "R11", 167.64, 96.52)
+    put(s, "C11", 180.34, 83.82)
+    s.wire(s.pin("D2", "1"), (190.5, Y))
+    s.wire((167.64, Y), s.pin("R10", "1"))
     s.wire(s.pin("R10", "2"), s.pin("R11", "1"))
-    s.wire((190.5, 96.52), (198.12, 96.52))
-    s.label("MT_FB", 190.5, 96.52, 180)
-    s.wire(s.pin("R10", "1"), (198.12, 76.2))
-    s.wire(s.pin("R11", "2"), (198.12, 110.49))
-    s.gnd(198.12, 110.49)
+    s.wire(s.pin("R11", "2"), (167.64, 102.87))
+    s.gnd(167.64, 102.87)
+    s.wire(s.pin("U5", "3"), (134.62, 99.06), (134.62, 106.68), (157.48, 106.68), (157.48, 90.17), (167.64, 90.17))
+    s.label("MT_FB", 139.7, 106.68)
+    s.wire((180.34, Y), s.pin("C11", "1"))
+    s.wire(s.pin("C11", "2"), (180.34, 90.17))
+    s.gnd(180.34, 90.17)
+    s.wire((185.42, Y), (185.42, Y - 5.08))
+    s.power("PWR_FLAG", 185.42, Y - 5.08)
+    s.wire((190.5, Y), (190.5, 71.12))
+    s.power("+24V", 190.5, 71.12)
 
-    # ---- 24 V output ------------------------------------------------------
-    s.wire(s.pin("D2", "1"), (223.52, 76.2))
-    s.wire(s.pin("C11", "1"), (213.36, 76.2))
-    s.wire(s.pin("C11", "2"), (213.36, 93.98))
-    s.gnd(213.36, 93.98)
-    s.wire((223.52, 76.2), (223.52, 66.04))
-    s.power("+24V", 223.52, 66.04)
-    s.wire((218.44, 76.2), (218.44, 68.58))
-    s.power("PWR_FLAG", 218.44, 68.58)
-
-    s.note("FEEDBACK MATH", 96.52, 114.3, 1.4, bold=True)
-    s.note("Vout = Vref x (1 + R10/R11), Vref = 0.6 V", 96.52, 119.38, 1.0)
-    s.note("     = 0.6 x (1 + 390k/10k) = 24.00 V", 96.52, 121.92, 1.0)
-    s.note("Load is one 2-wire transmitter at 24 mA max, so the", 96.52, 127.0, 1.0)
-    s.note("converter runs at roughly 30 mA / 0.72 W out.", 96.52, 129.54, 1.0)
-
-    s.note("D2 (SS34) and C11 are rated 40 V / 50 V for margin", 96.52, 134.62, 1.0)
-    s.note("over the 24 V rail; U5's SW pin is the tight one, 30 V.", 96.52, 137.16, 1.0)
-
+    s.note("FEEDBACK MATH", 101.6, 116.84, 1.4, bold=True)
+    s.note("Vout = Vref x (1 + R10/R11), Vref = 0.6 V", 101.6, 121.92, 1.0)
+    s.note("     = 0.6 x (1 + 390k/10k) = 24.00 V", 101.6, 124.46, 1.0)
+    s.note("Load is one 2-wire transmitter at 24 mA max, so the", 101.6, 129.54, 1.0)
+    s.note("converter runs at roughly 30 mA / 0.72 W out.", 101.6, 132.08, 1.0)
+    s.note("D2 (SS34) and C11 are rated 40 V / 50 V for margin", 101.6, 137.16, 1.0)
+    s.note("over the 24 V rail; U5's SW pin is the tight one, 30 V.", 101.6, 139.7, 1.0)
     s.block_end()
 
 
@@ -634,7 +617,12 @@ def build_test_points(s):
 def build_limiter(s):
     s.block_start("LOOP CURRENT LIMITER  -  35 mA constant current, reverse blocking")
 
-    # ---- Current limiter -------------------------------------------------
+    # Drawn as the textbook two-transistor limiter, left to right along one
+    # rail: +24 V in, sense resistor, pass transistor, blocking diode, LOOP_V
+    # out. Q2 sits under the sense resistor it watches, wired across it, and
+    # steals Q1's base drive. Every connection is a wire; the three net names
+    # are there to name the nets, not to join them.
+    #
     # Q1 passes the loop current; R16 senses it; Q2 robs Q1's base drive at
     # the limit. Constant current, deliberately NOT foldback: a 2-wire
     # transmitter is a constant-current load, and Rev F's foldback could park
@@ -642,50 +630,44 @@ def build_limiter(s):
     # reading (sim/recover.py). Q1 is SOT-223 to carry a dead short instead.
     # D4 stops LOOP_V driving Q1 backwards into the rail, which it did from
     # ~25 V, long before the TVS ever conducted (sim/4_reverse_conduction.py).
-    put(s, "R16", 157.48, 137.16)
-    put(s, "Q1", 160.02, 149.86, 180)      # E up, C down, B to the right
-    put(s, "Q2", 195.58, 142.24, 0, mirror="x")   # KiCad's canonical form for a 180+mirror-y flip
-    put(s, "R17", 165.1, 158.75)
-    put(s, "R18", 215.9, 137.16)
-    put(s, "D4", 157.48, 161.29, 90)       # anode up at Q1's collector
+    Y = 139.7                                       # the rail
+    put(s, "R16", 134.62, Y, 90)                    # 1 (+24V) left, 2 (sense) right
+    put(s, "Q1", 165.1, Y + 2.54, 270, mirror="x")  # E left, C right, B down
+    put(s, "D4", 184.15, Y, 180)                    # anode left, cathode right
+    put(s, "Q2", 127.0, 149.86, 180)                # E up on the rail, B right, C down
+    put(s, "R18", 147.32, 149.86, 270)              # 2 (to Q2's base) left, 1 (sense) right
+    put(s, "R17", 165.1, 165.1)
 
-    s.wire((157.48, 130.81), s.pin("R16", "1"))
-    s.power("+24V", 157.48, 130.81)
+    s.power("+24V", 121.92, 134.62)
+    s.wire((121.92, 134.62), (121.92, Y), s.pin("R16", "1"))
     s.wire(s.pin("R16", "2"), s.pin("Q1", "3"))
-    s.wire((157.48, 142.24), (151.13, 142.24))
-    s.label("LOOP_SNS", 151.13, 142.24, 180)
-
+    s.label("LOOP_SNS", 140.97, Y)
     # pins 2 and 4 are both the collector (4 is the tab)
-    s.wire(s.pin("Q1", "2"), s.pin("Q1", "4"), (149.86, 154.94))
-    s.label("LOOP_C", 149.86, 154.94, 180)
+    s.wire(s.pin("Q1", "4"), s.pin("Q1", "2"))
     s.wire(s.pin("Q1", "2"), s.pin("D4", "2"))
-    s.wire(s.pin("D4", "1"), (157.48, 167.64), (151.13, 167.64))
-    s.label("LOOP_V", 151.13, 167.64, 180)
-    # base drive is a real wire down to R17; only Q2's collector joins by label
-    s.wire(s.pin("Q1", "1"), s.pin("R17", "1"))
-    s.label("LOOP_DRV", 165.1, 152.4)
+    s.label("LOOP_C", 171.45, Y)
+    s.wire(s.pin("D4", "1"), (195.58, Y))
+    s.label("LOOP_V", 195.58, Y)
 
-    s.wire(s.pin("Q2", "2"), (198.12, 132.08))
-    s.power("+24V", 198.12, 132.08)
-    s.wire(s.pin("Q2", "3"), (198.12, 152.4), (186.69, 152.4))
-    s.label("LOOP_DRV", 186.69, 152.4, 180)
-    s.wire(s.pin("Q2", "1"), (184.15, 142.24))
-    s.label("LOOP_FB", 184.15, 142.24, 180)
+    # Q2 across the sense resistor: emitter on the +24 V side, base on the
+    # far side through R18
+    s.wire(s.pin("Q2", "2"), (124.46, Y))
+    s.wire(s.pin("Q2", "1"), s.pin("R18", "2"))
+    s.label("LOOP_FB", 133.35, 149.86)
+    s.wire(s.pin("R18", "1"), (154.94, 149.86), (154.94, Y))
 
-    s.wire(s.pin("R17", "2"), (165.1, 165.1))
-    s.gnd(165.1, 165.1)
+    # base drive: R17 pulls Q1's base down, Q2's collector pulls it back up
+    s.wire(s.pin("Q1", "1"), (165.1, 160.02), s.pin("R17", "1"))
+    s.wire(s.pin("Q2", "3"), (124.46, 160.02), (165.1, 160.02))
+    s.label("LOOP_DRV", 133.35, 160.02)
+    s.wire(s.pin("R17", "2"), (165.1, 171.45))
+    s.gnd(165.1, 171.45)
 
-    # a short stub: the label's text runs left, toward Q2's +24V port
-    s.wire(s.pin("R18", "1"), (215.9, 130.81), (213.36, 130.81))
-    s.label("LOOP_SNS", 213.36, 130.81, 180)
-    s.wire(s.pin("R18", "2"), (215.9, 143.51), (222.25, 143.51))
-    s.label("LOOP_FB", 222.25, 143.51)
-
-    s.note("Ilim = Vbe(Q2) / R16: 35 / 33 / 27 mA at", 96.52, 137.16, 1.0)
-    s.note("-20 / 25 / 85 C, so 24 mA always reads.", 96.52, 139.7, 1.0)
-    s.note("Dead short: 24 V x 35 mA = 0.85 W in Q1,", 96.52, 142.24, 1.0)
-    s.note("hence SOT-223. R16 + Q1 + D4 cost 1.2 V:", 96.52, 144.78, 1.0)
-    s.note("22.8 V at J2 with 20 mA flowing.", 96.52, 147.32, 1.0)
+    s.note("Ilim = Vbe(Q2) / R16: 35 / 33 / 27 mA at", 175.26, 152.4, 1.0)
+    s.note("-20 / 25 / 85 C, so 24 mA always reads.", 175.26, 154.94, 1.0)
+    s.note("Dead short: 24 V x 35 mA = 0.85 W in Q1,", 175.26, 157.48, 1.0)
+    s.note("hence SOT-223. R16 + Q1 + D4 cost 1.2 V:", 175.26, 160.02, 1.0)
+    s.note("22.8 V at J2 with 20 mA flowing.", 175.26, 162.56, 1.0)
     s.block_end()
 
 

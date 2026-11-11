@@ -60,7 +60,8 @@ PLACEMENT = {
     # U1's centre sits 9.95 mm below the edge, so its local y -9.95 lands on
     # it: 6.5 mm of antenna overhangs and the pad rows start 1.0 mm inside.
     "U1":   (22.00, 9.95, 0),
-    "C3":   (9.50, 2.30, 0),       # 100 nF at pin 2 (3V3), y 2.27
+    "C3":   (11.50, 1.79, 90),     # ON the feed to module pin 2: +3V3 pad level with the pin, GND pad beside pin 1
+                                   # (it was 4 mm away with its GND pad between it and the pin)
     "R1":   (9.50, 4.30, 0),       # EN pull-up at pin 3, y 3.54
     "C1":   (9.50, 6.30, 0),       # EN RC cap
     "C2":   (9.30, 8.80, 0),       # 22 uF bulk, below the HF parts
@@ -197,6 +198,7 @@ REF_PINS = {
     "D4":  (34.05, 49.00, 90),
     "R17": (31.85, 37.60, 90),
     "R18": (37.20, 37.55, 0),
+    "C3":  (9.20, 1.31, 0),        # left of its ground via; beside it the designator ran into R1's
     "R11": (32.70, 34.60, 0),      # east of the divider, over the masked +24V track
     "R10": (32.70, 35.72, 0),
 }
