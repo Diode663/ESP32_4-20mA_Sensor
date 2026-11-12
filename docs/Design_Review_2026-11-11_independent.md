@@ -1,7 +1,7 @@
 # ESP32 4-20 mA Sensor Board — independent review of Rev G
 
 2026-11-11, written on branch `claude/rev-h-review`, which was merged into `main` the same
-day. Rev G as ordered is commit `0812b9d`; "the branch" below means Rev H.
+day. Rev G is tag `rev-g`; it was never ordered. "The branch" below means Rev H.
 
 Done fresh from the netlist, the datasheets and the routed board, without leaning on the two
 earlier reviews; afterwards compared with them, so each item says whether it is new. Nothing
@@ -31,9 +31,10 @@ here was measured on hardware.
   bus-pin protection; D4 blocking; load-switch gate drive.
 - Leakage paths around the shunt: none that the two-point calibration does not remove.
 
-## For the Rev G boards on order
+## If a Rev G board is ever built
 
-Nothing stops them being used. Two hand reworks are worth doing before field use:
+Rev G was never ordered, so this applies only to a board built from tag `rev-g`. Nothing would
+stop it being used. Two hand reworks are worth doing before field use:
 
 1. D5 → SMAJ5.0A (same SMA footprint, e.g. LCSC `C113952`): the shunt then sees 18–23 W, inside
    its pulse rating. Check the reading at 4 mA afterwards; a 5 V TVS leaks more than a 12 V one.
@@ -54,7 +55,7 @@ own router, and build the schematic findings into the drawing skill.
 | 3 | R15 to ground. Firmware unchanged (`restore_mode: ALWAYS_ON` turns the loop on at boot); comments updated |
 | 4 | C3 on the feed, scripted, no via (already on the branch) |
 | 5 | Legend: J2 pinout top and bottom, RESET, BOOT, name and revision |
-| 6-9 | Not changed. Scope VIN_SW at first enable on a Rev G board |
+| 6-9 | Not changed. Scope VIN_SW at first enable on the first board built |
 
 Board: F1 and D6 needed the row above the terminal, so D4 moved into the strip
 right of it, D3 stands upright at the row's east end, TP1 sits beside R20 and
