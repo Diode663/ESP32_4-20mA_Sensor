@@ -2,10 +2,11 @@
 
 Single-channel industrial 4-20mA current-loop reader, USB-C powered, built for ESPHome.
 
-## Rev H (branch `claude/rev-h-review`, 2026-11-11)
+## Rev H (2026-11-11)
 
-Rev G is the board that was ordered; it is unchanged on `main`. This branch
-carries the changes that came out of an independent review of it
+Rev G is the board that was ordered; its files, fab package included, are at
+commit `0812b9d`. Rev H carries the changes that came out of an independent
+review of it
 (`docs/Design_Review_2026-11-11_independent.md`). The sections further down
 still describe Rev G except where they say Rev H.
 

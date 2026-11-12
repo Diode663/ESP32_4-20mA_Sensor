@@ -1,6 +1,7 @@
 # ESP32 4-20 mA Sensor Board — independent review of Rev G
 
-2026-11-11, on branch `claude/rev-h-review`. Rev G as ordered is untouched on `main`.
+2026-11-11, written on branch `claude/rev-h-review`, which was merged into `main` the same
+day. Rev G as ordered is commit `0812b9d`; "the branch" below means Rev H.
 
 Done fresh from the netlist, the datasheets and the routed board, without leaning on the two
 earlier reviews; afterwards compared with them, so each item says whether it is new. Nothing
